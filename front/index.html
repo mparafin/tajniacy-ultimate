@@ -6,7 +6,31 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Lol</h1>
+    <input type="text" id='nick' placeholder="Jak się nazywasz?"></input>
+    <button id="namechanger">Ok</button>
+    <button id="joinred">Join red</button>
+    <button id="joinblue">Join blue</button>
+    <button id="joinspec">Join spec</button>
+    <div style="width: 100%;">
+        <h1 style="text-align: center;">Tajniacy ultimate</h1>
+        <div>
+            <div id='red' style="width: 50%; float: left; background-color: indianred;">
+                Czerwoni
+                <div id='redteam' style="width: 100%; background-color: lightcoral;"></div>
+            </div>
+            <div id='blue' style="width: 50%; float: right; text-align: right; background-color: cornflowerblue;">
+                Niebiescy
+                <div id="blueteam" style="width: 100%; background-color: lightskyblue;"></div>
+            </div>
+        </div>
+        <div id='spec' style="width: 100%; text-align: center;">
+            Obserwatorzy
+            <div id="specteam" style="width: 100%;"></div>
+        </div>
+    </div>
+    <div style="width: 70%; height: 70vh; margin: auto;">
+        <table id="matrix" style="width: 100%; height: 100%; border-spacing: 5px;"></table>
+    </div>
     <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
