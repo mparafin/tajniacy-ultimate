@@ -1,22 +1,7 @@
-import sys
-import asyncio
-import websockets
 import json
-import enum
+import asyncio
 
-class Team(enum.Enum):
-	SPEC = 0
-	RED = 1
-	BLUE = 2
-
-class Player:
-	def __init__(self, websocket):
-		self.socket = websocket
-		self.nick = ""
-		self.team = Team.SPEC
-		self.capt = False
-
-PLAYERS = set()
+from tajniacy_definitions import *
 
 def player_list(player):
 	result = {}
@@ -78,11 +63,4 @@ async def client_handler(websocket, path):
 	finally:
 		print("CLIENT DISCONNECTED")
 		PLAYERS.remove(p)
-
-async def main():
-	start_server = websockets.serve(client_handler, "localhost", 8888)
-	thing = await start_server
-	print("server up")
-
-asyncio.get_event_loop().run_until_complete(main())
-asyncio.get_event_loop().run_forever()
+		await broadcast_player_list()
