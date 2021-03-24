@@ -13,3 +13,5 @@ class Player:
 		self.capt = False
 
 PLAYERS = set()
+
+MATRIX = []

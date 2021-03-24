@@ -53,6 +53,7 @@ async def client_handler(websocket, path):
 	p = Player(websocket)
 	PLAYERS.add(p)
 	await websocket.send(player_list(p))
+	await websocket.send(json.dumps({"type":"matrix", "matrix":json.dumps(MATRIX)}))
 	
 	print("Entering echo mode")
 	try:

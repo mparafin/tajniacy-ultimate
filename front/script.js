@@ -57,6 +57,18 @@ socket.onmessage = function(s) {
 					t.appendChild(p);
 				})
 			});
+			break;
+		case "matrix":
+			data = JSON.parse(message["matrix"])
+			for (let i = 0; i < matrix.rows.length; i++) {
+				const row = matrix.rows[i];
+				console.log(row);
+				for (let j = 0; j < row.cells.length; j++) {
+					const cell = row.cells[j];
+					console.log(cell);
+					cell.textContent = data[i][j];
+				}
+			}
 	}
 
 	console.log("Message from server! : " + s.data);
