@@ -13,7 +13,7 @@ class Player:
 	def __init__(self, websocket):
 		self.socket = websocket
 		self.nick = ""
-		self.team = Team.RED
+		self.team = Team.SPEC
 		self.capt = False
 
 PLAYERS = set()

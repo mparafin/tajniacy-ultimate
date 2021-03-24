@@ -40,20 +40,20 @@ socket.onmessage = function(s) {
 			teamNames.forEach(team => {
 				elementName = team + "team";
 				let t = document.getElementById(elementName);
-				if(t != null) {
-					while(t.firstChild) {
-						t.removeChild(t.lastChild);
-					}
+				while(t.firstChild) {
+					t.removeChild(t.lastChild);
 				}
 				if (message["player"].team.toLowerCase() === team) {
 					p = document.createElement("div");
 					p.textContent = message["player"].nick;
 					p.style.color = "rgb(0, 100, 10)";
+					p.style.padding = "0px 0.5em";
 					t.appendChild(p);
 				}
 				message[team].forEach(player => {
 					p = document.createElement("div");
 					p.textContent = player;
+					p.style.padding = "0px 0.5em";
 					t.appendChild(p);
 				})
 			});
