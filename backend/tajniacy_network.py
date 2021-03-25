@@ -32,9 +32,11 @@ async def name_handler(message, player):
 	await broadcast_player_list()
 
 async def click_handler(message, player):
-	print("click_handler")
-	if message["id"] == "0 0":
-		await broadcast(json.dumps({"type":"misc", "data":"woof!"}))
+	print("Clicked on card " + message["id"])
+	x, y = message["id"].split(" ")
+	UNCOVERED[message["id"]] = SECRET[int(x)][int(y)].name
+	await broadcast(json.dumps({"type":"uncovered", "uncovered":UNCOVERED}))
+	
 
 async def teamchange_handler(message, player):
 	print("Changing team of player " + player.nick + " to " + message["team"])
@@ -53,7 +55,7 @@ async def client_handler(websocket, path):
 	p = Player(websocket)
 	PLAYERS.add(p)
 	await websocket.send(player_list(p))
-	await websocket.send(json.dumps({"type":"matrix", "matrix":MATRIX}))
+	await websocket.send(json.dumps({"type":"matrix", "matrix":MATRIX, "uncovered":UNCOVERED}))
 	
 	print("Entering echo mode")
 	try:

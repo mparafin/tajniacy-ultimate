@@ -1,17 +1,36 @@
 let ip = location.host;
 socket = new WebSocket('ws://'+ ip + ':8888');
 teamNames = ["red", "blue", "spec"]
+tileColors = {
+	"RED":"lightcoral",
+	"BLUE":"lightskyblue",
+	"SPEC":"wheat",
+	"KILLER":"black"
+}
 
-document.getElementById("namechanger").onclick = function () {
+function namechanger() {
 	let nick = document.getElementById("nick").value;
 	socket.send(JSON.stringify({"type":"nick", "nick":nick}));
 }
 
-teamNames.forEach(team => {
+function teamchanger(team) {
 	document.getElementById("join"+team).onclick = function () {
 		socket.send(JSON.stringify({"type":"teamchange", "team":team}));
 	}
-})
+}
+
+function uncovered_handler(data) {
+	Object.keys(data).forEach(key => {
+		document.getElementById(key).style.backgroundColor = tileColors[data[key]];
+		if (data[key] === "KILLER") {
+			document.getElementById(key).style.color = "white";
+		}
+		});
+}
+
+document.getElementById("namechanger").onclick = namechanger;
+
+teamNames.forEach(team => teamchanger(team));
 
 matrix = document.getElementById("matrix");
 matrix.setAttribute('border', '1');
@@ -22,7 +41,7 @@ for (let i = 0; i < 5; i++) {
 		td.id = i + " " + j;
 		td.style.textAlign = 'center';
 		td.style.verticalAlign = 'middle';
-		td.textContent = "I am cell " + td.id;
+		td.textContent = "";
 		td.onclick = function () {
 			socket.send(JSON.stringify({"type":"click", "id":td.id}));
 		}
@@ -32,6 +51,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 socket.onmessage = function(s) {
+	console.log("Message from server! : " + s.data);
 	try {
 		message = JSON.parse(s.data);	
 	} catch (error) {
@@ -73,7 +93,9 @@ socket.onmessage = function(s) {
 					cell.textContent = data[i][j];
 				}
 			}
+		case "uncovered":
+			uncovered_handler(message["uncovered"]);
+			break;
 	}
 
-	console.log("Message from server! : " + s.data);
 }
