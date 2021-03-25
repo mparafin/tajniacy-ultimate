@@ -4,6 +4,7 @@ import websockets
 import json
 import enum
 import random
+import socket
 
 from tajniacy_definitions import *
 import tajniacy_network as tn
@@ -26,9 +27,13 @@ def game_init():
 			words.remove(MATRIX[i][j])
 	
 async def main():
-	start_server = websockets.serve(tn.client_handler, "localhost", 8888)
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("8.8.8.8", 80))
+	start_server = websockets.serve(tn.client_handler, s.getsockname()[0], 8888)
 	thing = await start_server
+	s.close()
 	print("server up")
+	
 	game_init()
 	await tn.broadcast(json.dumps(MATRIX))
 

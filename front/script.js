@@ -1,4 +1,5 @@
-socket = new WebSocket('ws://127.0.0.1:8888');
+let ip = location.host;
+socket = new WebSocket('ws://'+ ip + ':8888');
 teamNames = ["red", "blue", "spec"]
 
 document.getElementById("namechanger").onclick = function () {
@@ -62,10 +63,8 @@ socket.onmessage = function(s) {
 			data = JSON.parse(message["matrix"])
 			for (let i = 0; i < matrix.rows.length; i++) {
 				const row = matrix.rows[i];
-				console.log(row);
 				for (let j = 0; j < row.cells.length; j++) {
 					const cell = row.cells[j];
-					console.log(cell);
 					cell.textContent = data[i][j];
 				}
 			}
