@@ -34,7 +34,7 @@ async def name_handler(message, player):
 async def click_handler(message, player):
 	print("click_handler")
 	if message["id"] == "0 0":
-		await broadcast("woof!")
+		await broadcast(json.dumps({"type":"misc", "data":"woof!"}))
 
 async def teamchange_handler(message, player):
 	print("Changing team of player " + player.nick + " to " + message["team"])
@@ -53,14 +53,14 @@ async def client_handler(websocket, path):
 	p = Player(websocket)
 	PLAYERS.add(p)
 	await websocket.send(player_list(p))
-	await websocket.send(json.dumps({"type":"matrix", "matrix":json.dumps(MATRIX)}))
+	await websocket.send(json.dumps({"type":"matrix", "matrix":MATRIX}))
 	
 	print("Entering echo mode")
 	try:
 		async for message in websocket:
 			mes = json.loads(message)
 			await message_handler(mes, p)			
-			await websocket.send(json.dumps({"type":"misc", "data":json.dumps(mes)}))
+			await websocket.send(json.dumps({"type":"misc", "data":mes}))
 	finally:
 		print("CLIENT DISCONNECTED")
 		PLAYERS.remove(p)

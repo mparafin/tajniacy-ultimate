@@ -32,7 +32,12 @@ for (let i = 0; i < 5; i++) {
 }
 
 socket.onmessage = function(s) {
-	message = JSON.parse(s.data)
+	try {
+		message = JSON.parse(s.data);	
+	} catch (error) {
+		console.log("Unparseable data: " + s.data);
+	}
+	
 	switch(message["type"]) {
 		case "nick":
 			console.log("Changed player nickname to: " + message["nick"]);
@@ -60,7 +65,7 @@ socket.onmessage = function(s) {
 			});
 			break;
 		case "matrix":
-			data = JSON.parse(message["matrix"])
+			data = message["matrix"]
 			for (let i = 0; i < matrix.rows.length; i++) {
 				const row = matrix.rows[i];
 				for (let j = 0; j < row.cells.length; j++) {
