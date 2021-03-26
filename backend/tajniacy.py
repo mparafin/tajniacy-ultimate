@@ -16,11 +16,13 @@ def reset_matrix():
 	filenames = os.listdir("./db")
 	for file in filenames:
 		path = "./db/"+file
-		with open(path) as f:
+		with open(path, encoding="utf-8") as f:
 			for w in f:
 				w = w.strip("\n,; ")
 				w = w.upper()
 				words.add(w)
+	words = list(words)
+	
 	for i in range(5):
 		MATRIX.append(list())
 		for j in range(5):
@@ -56,11 +58,12 @@ async def main():
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(("8.8.8.8", 80))
-	start_server = websockets.serve(tn.client_handler, s.getsockname()[0], 8888)
+	ip = s.getsockname()[0]
+	start_server = websockets.serve(tn.client_handler, ip, 8888)
 	# start_server = websockets.serve(tn.client_handler, '127.0.0.1', 8888)
 	thing = await start_server
 	s.close()
-	print("server up")
+	print("server up on address " + ip)
 
 
 asyncio.get_event_loop().run_until_complete(main())
