@@ -11,6 +11,13 @@
             height: 3em;
             text-align: center;
             width: 60%;
+            border-radius: 1em;
+        }
+        .captbutton {
+            margin: 0.25em;
+            height: 3em;
+            text-align: center;
+            border-radius: 1em;
         }
     </style>
 </head>
@@ -21,8 +28,14 @@
                 <input type="text" id='nick' placeholder="Jak się nazywasz?" style="margin-bottom: 0.25em;"></input>
                 <button id="namechanger" style="margin-left: 0.5em;">Ok</button><br>
             </div>
-            <button id="joinred" class="teambutton" style="background-color: lightcoral;">Dołącz do Czerwonych</button><br>
-            <button id="joinblue" class="teambutton" style="background-color: lightskyblue;">Dołącz do Niebieskich</button><br>
+            <div style="display: flex; flex-direction: row;">
+                <button id="joinred" class="teambutton" style="background-color: lightcoral;">Dołącz do Czerwonych</button><br>
+                <button id="captred" class="captbutton" title="Zostań kapitanem drużyny" style="background-color: indianred;">👑</button>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+                <button id="joinblue" class="teambutton" style="background-color: lightskyblue;">Dołącz do Niebieskich</button><br>
+                <button id="captblue" class="captbutton" title="Zostań kapitanem drużyny" style="background-color: cornflowerblue;">👑</button>
+            </div>
             <button id="joinspec" class="teambutton" style="background-color: whitesmoke;">Zostań Obserwatorem</button>
         </div>
         <div style="width: 60%; float: left;">

@@ -31,20 +31,21 @@ def reset_matrix():
 
 def reset_secret():
 	SECRET.clear()
+	PREV_BEGINNER = True if False else False
 
 	tokens = list()
 	for _ in range(8):
-		tokens.append(Team.RED)
-		tokens.append(Team.BLUE)
+		tokens.append(Team.RED.name)
+		tokens.append(Team.BLUE.name)
 	# who's first?
-	t = Team.RED if PREV_BEGINNER else Team.BLUE
+	t = Team.RED.name if PREV_BEGINNER else Team.BLUE.name
 	tokens.append(t)
 	TURN = t
 	# neutrals
 	for _ in range(7):
-		tokens.append(Team.SPEC)
+		tokens.append(Team.SPEC.name)
 	# BUKA
-	tokens.append(Team.KILLER)
+	tokens.append(Team.KILLER.name)
 	
 	for i in range(5):
 		SECRET.append(list())
