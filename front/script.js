@@ -10,26 +10,46 @@ tileColors = {
 
 // ------ BUTTONS ------
 
-function namechanger() {
+function init_namechanger() {
 	let nick = document.getElementById("nick").value;
-	socket.send(JSON.stringify({"type":"nick", "nick":nick}));
+	document.getElementById("namechanger").onclick = function () {
+		socket.send(JSON.stringify({"type":"nick", "nick":nick}));
+	}
 }
 
-function teamchanger(team) {
+function init_teamchanger(team) {
 	document.getElementById("join"+team).onclick = function () {
 		socket.send(JSON.stringify({"type":"teamchange", "team":team}));
 	}
 }
 
-function captbutton(team) {
+function init_captbutton(team) {
 	document.getElementById("capt"+team).onclick = function () {
 		socket.send(JSON.stringify({"type":"capt", "team":team}));
 	}
 }
 
+function init_entrybutton() {
+	document.getElementById("entrybutton").onclick = function () {
+		let entry = document.getElementById("entry").value;
+		let entrynumber = document.getElementById("entrynumber").value;
+		socket.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
+	}
+}
+
 // -------- HELPER FUNCTIONS -------
 
+function be_captain() {
+	document.getElementById("captred").style.visibility = "hidden";
+	document.getElementById("captblue").style.visibility = "hidden";
+	document.getElementById("captain_stuff").style.visibility = "visible";
+}
 
+function be_deckhand() {
+	document.getElementById("captred").style.visibility = "visible";
+	document.getElementById("captblue").style.visibility = "visible";
+	document.getElementById("captain_stuff").style.visibility = "hidden";
+}
 
 // -------- PROTOCOL HANDLERS -------
 
@@ -47,9 +67,9 @@ function player_list_handler(message) {
 			p.style.padding = "0px 0.5em";
 			if (message["player"].capt) {
 				p.style.fontWeight = "bold";
-				capt = true;
+				be_captain();
 			} else {
-				capt = false;
+				be_deckhand();
 			}
 			t.appendChild(p);
 		}
@@ -57,7 +77,6 @@ function player_list_handler(message) {
 			p = document.createElement("div");
 			p.textContent = player["nick"];
 			p.style.padding = "0px 0.5em";
-			console.log(player.capt === true);
 			if (player.capt) {
 				p.style.fontWeight = "bold";
 				t.insertBefore(p, t.firstChild);
@@ -104,12 +123,14 @@ handlers = {
 }
 
 // ------------------ START -----------------
-document.getElementById("namechanger").onclick = namechanger;
+
+init_namechanger();
+init_entrybutton();
 
 teamNames.forEach(team => {
-	teamchanger(team);
+	init_teamchanger(team);
 	if (team !== "spec") {
-		captbutton(team);
+		init_captbutton(team);
 	}
 });
 
@@ -122,6 +143,7 @@ for (let i = 0; i < 5; i++) {
 		td.id = i + " " + j;
 		td.style.textAlign = 'center';
 		td.style.verticalAlign = 'middle';
+		td.style.borderRadius = '1em';
 		td.textContent = "";
 		td.onclick = function () {
 			socket.send(JSON.stringify({"type":"click", "id":td.id}));
@@ -129,6 +151,14 @@ for (let i = 0; i < 5; i++) {
 		tr.appendChild(td);
 	}
 	matrix.appendChild(tr);
+}
+
+select = document.getElementById("entrynumber");
+for (let i = 0; i < 10; i++) {
+	let opt = document.createElement("option");
+	opt.value = i;
+	opt.text = i;
+	select.appendChild(opt);
 }
 
 socket.onmessage = function(s) {

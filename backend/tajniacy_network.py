@@ -39,6 +39,8 @@ async def name_handler(message, player):
 async def click_handler(message, player):
 	if player.team == Team.SPEC:
 		return
+	if player.capt:
+		return
 	print("Clicked on card " + message["id"])
 	x, y = message["id"].split(" ")
 	UNCOVERED[message["id"]] = SECRET[int(x)][int(y)]
@@ -60,12 +62,17 @@ async def capt_handler(message, player):
 	player.capt = True
 	await broadcast_player_list()
 
+async def entry_handler(message, player):
+	CLICKS_REMAINING = message["entrynumber"]
+	await broadcast(json.dumps({"type":"entry", "entry":message["entry"], "number":message["entrynumber"]}))
+
 async def message_handler(message, player):
 	await {
 		'nick': name_handler,
 		'click': click_handler,
 		'teamchange': teamchange_handler,
 		'capt': capt_handler,
+		'entry': entry_handler,
 	}[message["type"]](message, player)
 
 async def client_handler(websocket, path):

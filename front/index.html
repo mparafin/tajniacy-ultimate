@@ -56,8 +56,13 @@
             </div>
         </div>
     </div>
-    <div style="width: 70%; height: 70vh; margin: auto; margin-top: 1em;">
-        <table id="matrix" style="table-layout: fixed; width: 100%; height: 100%; border-spacing: 5px;"></table>
+    <div style="width: 70%; height: 70vh; margin: auto; margin-top: 1em; margin-bottom: 1em;">
+        <table id="matrix" style="table-layout: fixed; width: 100%; height: 100%; border-spacing: 5px; border: hidden;"></table>
+    </div>
+    <div id="captain_stuff" style="width: 70%; margin: auto; display: flex; flex-direction: row; justify-content: center;">
+        <input id="entry" type="text" placeholder="Hasło..." style="border-radius: 5px; margin: 0 0.5em;">
+        <select id="entrynumber" style="margin: 0 0.5em;"></select>
+        <button id="entrybutton" style="margin: 0 0.5em;">Ok!</button>
     </div>
     <script type="text/javascript" src="script.js"></script>
 </body>
