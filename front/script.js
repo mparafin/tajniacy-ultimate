@@ -11,8 +11,8 @@ tileColors = {
 // ------ BUTTONS ------
 
 function init_namechanger() {
-	let nick = document.getElementById("nick").value;
 	document.getElementById("namechanger").onclick = function () {
+		let nick = document.getElementById("nick").value;
 		socket.send(JSON.stringify({"type":"nick", "nick":nick}));
 	}
 }
