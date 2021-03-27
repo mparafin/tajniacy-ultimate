@@ -6,11 +6,11 @@ import enum
 import random
 import socket
 
-from tajniacy_definitions import *
+import tajniacy_definitions as td
 import tajniacy_network as tn
 
 def reset_matrix():
-	MATRIX.clear()
+	td.MATRIX.clear()
 
 	words = set()
 	filenames = os.listdir("./db")
@@ -24,36 +24,37 @@ def reset_matrix():
 	words = list(words)
 	
 	for i in range(5):
-		MATRIX.append(list())
+		td.MATRIX.append(list())
 		for j in range(5):
-			MATRIX[i].append(random.sample(words, 1)[0])
-			words.remove(MATRIX[i][j])
+			td.MATRIX[i].append(random.sample(words, 1)[0])
+			words.remove(td.MATRIX[i][j])
 
 def reset_secret():
-	SECRET.clear()
-	PREV_BEGINNER = True if False else False
+	td.SECRET.clear()
+	td.PREV_BEGINNER = True if td.PREV_BEGINNER == False else False
 
 	tokens = list()
 	for _ in range(8):
-		tokens.append(Team.RED.name)
-		tokens.append(Team.BLUE.name)
+		tokens.append(td.Team.RED.name)
+		tokens.append(td.Team.BLUE.name)
 	# who's first?
-	t = Team.RED.name if PREV_BEGINNER else Team.BLUE.name
+	t = td.Team.RED.name if td.PREV_BEGINNER else td.Team.BLUE.name
 	tokens.append(t)
-	TURN = t
+	td.TURN = t
 	# neutrals
 	for _ in range(7):
-		tokens.append(Team.SPEC.name)
+		tokens.append(td.Team.SPEC.name)
 	# BUKA
-	tokens.append(Team.KILLER.name)
+	tokens.append(td.Team.KILLER.name)
 	
 	for i in range(5):
-		SECRET.append(list())
+		td.SECRET.append(list())
 		for j in range(5):
-			SECRET[i].append(random.sample(tokens, 1)[0])
-			tokens.remove(SECRET[i][j])
+			td.SECRET[i].append(random.sample(tokens, 1)[0])
+			tokens.remove(td.SECRET[i][j])
 	
 async def main():
+	td.init()
 	reset_matrix()
 	reset_secret()
 	

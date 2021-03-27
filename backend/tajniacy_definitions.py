@@ -13,19 +13,31 @@ class Player:
 		self.team = Team.SPEC
 		self.capt = False
 
-# set of players connected to the server atm
-PLAYERS = set()
+def init():
 
-# word matrix (5x5 array of str)
-MATRIX = []
-# affiliation matrix - which words are which team (5x5 array of Team)
-SECRET = []
-# which words' affiliations are visible to everyone (list of {"id":id, "team":Team})
-UNCOVERED = dict()
+	# set of players connected to the server atm
+	global PLAYERS
+	PLAYERS = set()
 
-# switch to alternate the beginning team during secret generation
-PREV_BEGINNER = False
-# whose turn is it
-TURN = Team.SPEC
-# how many clicks remaining for the current team
-CLICKS_REMAINING = -1
+	# word matrix (5x5 array of str)
+	global MATRIX
+	MATRIX  = []
+	# affiliation matrix - which words are which team (5x5 array of Team)
+	global SECRET
+	SECRET = []
+	# which words' affiliations are visible to everyone (list of {"id":id, "team":Team})
+	global UNCOVERED
+	UNCOVERED = dict()
+
+	# switch to alternate the beginning team during secret generation
+	global PREV_BEGINNER
+	PREV_BEGINNER = False
+	# whose turn is it
+	global TURN
+	TURN = Team.SPEC
+	# current entry (word from captain)
+	global ENTRY
+	ENTRY = ""
+	# how many clicks remaining for the current team
+	global CLICKS_REMAINING
+	CLICKS_REMAINING = -1
