@@ -28,4 +28,4 @@ PREV_BEGINNER = False
 # whose turn is it
 TURN = Team.SPEC
 # how many clicks remaining for the current team
-CLICKS_REMAINING = 0
+CLICKS_REMAINING = -1

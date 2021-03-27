@@ -37,13 +37,18 @@ async def name_handler(message, player):
 	await broadcast_player_list()
 
 async def click_handler(message, player):
+	global CLICKS_REMAINING
 	if player.team == Team.SPEC:
 		return
 	if player.capt:
 		return
-	print("Clicked on card " + message["id"])
+	if CLICKS_REMAINING < 0:
+		return
+	CLICKS_REMAINING -= 1
+
 	x, y = message["id"].split(" ")
 	UNCOVERED[message["id"]] = SECRET[int(x)][int(y)]
+	print("Clicked on card " + message["id"] + " (\"" + MATRIX[int(x)][int(y)] + "\")")
 	await broadcast(json.dumps({"type":"uncovered", "uncovered":UNCOVERED}))
 	
 async def teamchange_handler(message, player):
@@ -63,7 +68,8 @@ async def capt_handler(message, player):
 	await broadcast_player_list()
 
 async def entry_handler(message, player):
-	CLICKS_REMAINING = message["entrynumber"]
+	global CLICKS_REMAINING
+	CLICKS_REMAINING = int(message["entrynumber"])
 	await broadcast(json.dumps({"type":"entry", "entry":message["entry"], "number":message["entrynumber"]}))
 
 async def message_handler(message, player):
