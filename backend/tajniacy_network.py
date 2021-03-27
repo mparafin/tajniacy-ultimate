@@ -69,6 +69,8 @@ async def capt_handler(message, player):
 
 async def entry_handler(message, player):
 	global CLICKS_REMAINING
+	if not player.capt:
+		return
 	CLICKS_REMAINING = int(message["entrynumber"])
 	await broadcast(json.dumps({"type":"entry", "entry":message["entry"], "number":message["entrynumber"]}))
 
