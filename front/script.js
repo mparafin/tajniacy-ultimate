@@ -42,13 +42,13 @@ function init_entrybutton() {
 function be_captain() {
 	document.getElementById("captred").style.visibility = "hidden";
 	document.getElementById("captblue").style.visibility = "hidden";
-	document.getElementById("captain_stuff").style.visibility = "visible";
+	document.getElementById("captain_stuff").style.display = "flex";
 }
 
 function be_deckhand() {
 	document.getElementById("captred").style.visibility = "visible";
 	document.getElementById("captblue").style.visibility = "visible";
-	document.getElementById("captain_stuff").style.visibility = "hidden";
+	document.getElementById("captain_stuff").style.display = "none";
 }
 
 // -------- PROTOCOL HANDLERS -------
@@ -110,6 +110,31 @@ function matrix_handler(message) {
 	uncovered_handler(message);
 }
 
+function entry_handler(message) {
+	if (message["entry"] === "") {
+		document.getElementById("entrydiv").style.visibility = "hidden";
+		document.getElementById("captain_stuff").style.visibility = "visible";
+		return;
+	}
+	document.getElementById("entrydiv").style.visibility = "visible";
+	document.getElementById("entrytext").textContent = message["entry"].toUpperCase();
+	document.getElementById("captain_stuff").style.visibility = 'hidden';
+}
+
+function turn_handler(message) {
+	switch (message["team"]) {
+		case "RED":
+			document.querySelector("body").style.backgroundColor = "rgba(255, 0, 0, 0.1)";
+			break;
+		case "BLUE":
+			document.querySelector("body").style.backgroundColor = "rgba(0, 0, 255, 0.1)";
+			break;
+		default:
+			console.log("Interesting, turn of team " + message["team"]);
+			break;
+	} 
+}
+
 function echo_handler(message) {
 	console.log("Echo from server:\n");
 	console.log(JSON.stringify(message["data"]));
@@ -119,6 +144,8 @@ handlers = {
 	"player_list": player_list_handler,
 	"matrix": matrix_handler,
 	"uncovered": uncovered_handler,
+	"entry": entry_handler,
+	"turn": turn_handler,
 	"echo": echo_handler,
 }
 
@@ -144,6 +171,7 @@ for (let i = 0; i < 5; i++) {
 		td.style.textAlign = 'center';
 		td.style.verticalAlign = 'middle';
 		td.style.borderRadius = '1em';
+		td.style.backgroundColor = "white";
 		td.textContent = "";
 		td.onclick = function () {
 			socket.send(JSON.stringify({"type":"click", "id":td.id}));

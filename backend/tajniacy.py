@@ -38,8 +38,8 @@ def reset_secret():
 		tokens.append(td.Team.RED.name)
 		tokens.append(td.Team.BLUE.name)
 	# who's first?
-	t = td.Team.RED.name if td.PREV_BEGINNER else td.Team.BLUE.name
-	tokens.append(t)
+	t = td.Team.RED if td.PREV_BEGINNER else td.Team.BLUE
+	tokens.append(t.name)
 	td.TURN = t
 	# neutrals
 	for _ in range(7):

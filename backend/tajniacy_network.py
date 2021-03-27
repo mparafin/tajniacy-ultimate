@@ -37,7 +37,7 @@ async def name_handler(message, player):
 	await broadcast_player_list()
 
 async def click_handler(message, player):
-	if player.team == td.Team.SPEC:
+	if player.team != td.TURN:
 		return
 	if player.capt:
 		return
@@ -48,6 +48,11 @@ async def click_handler(message, player):
 	x, y = message["id"].split(" ")
 	td.UNCOVERED[message["id"]] = td.SECRET[int(x)][int(y)]
 	print("Clicked on card " + message["id"] + " (\"" + td.MATRIX[int(x)][int(y)] + "\")")
+	if player.team.name != td.SECRET[int(x)][int(y)]:
+		td.CLICKS_REMAINING = -1
+		td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
+		await broadcast(json.dumps({"type":"turn", "team":td.TURN.name}))
+		await broadcast(json.dumps({"type":"entry", "entry":""}))
 	await broadcast(json.dumps({"type":"uncovered", "uncovered":td.UNCOVERED}))
 	
 async def teamchange_handler(message, player):
@@ -86,9 +91,13 @@ async def client_handler(websocket, path):
 	print("CONNECTION WITH CLIENT ESTABLISHED")
 	p = td.Player(websocket)
 	td.PLAYERS.add(p)
+
+	# send game state
 	await websocket.send(player_list(p))
 	await websocket.send(json.dumps({"type":"matrix", "matrix":td.MATRIX, "uncovered":td.UNCOVERED}))
-	
+	await websocket.send(json.dumps({"type":"turn", "team":td.TURN.name}))
+	if td.CLICKS_REMAINING >= 0:
+		await broadcast(json.dumps({"type":"entry", "entry":td.ENTRY, "number":td.CLICKS_REMAINING}))
 	
 	print("Entering echo mode")
 	try:
