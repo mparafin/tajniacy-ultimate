@@ -2,6 +2,7 @@ import json
 import asyncio
 
 import tajniacy_definitions as td
+import tajniacy_game as game
 
 def player_list(player):
 	result = {}
@@ -29,49 +30,27 @@ async def broadcast(message):
 	await asyncio.gather(*[p.socket.send(message) for p in td.PLAYERS])
 
 async def name_handler(message, player):
-	print("Changing player name from " + player.nick + " to " + message["nick"])
-	player.nick = message["nick"]
-	if player.nick == "":
-		player.team = td.Team.SPEC
-		player.capt = False
+	game.change_name(player, message["nick"])
 	await broadcast_player_list()
 
 async def click_handler(message, player):
-	if player.team != td.TURN or td.CLICKS_REMAINING < 0 or player.capt:
-		return
-	td.CLICKS_REMAINING -= 1
-
-	x, y = message["id"].split(" ")
-	td.UNCOVERED[message["id"]] = td.SECRET[int(x)][int(y)]
-	print("Clicked on card " + message["id"] + " (\"" + td.MATRIX[int(x)][int(y)] + "\")")
-	if player.team.name != td.SECRET[int(x)][int(y)]:
-		td.CLICKS_REMAINING = -1
-		td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
+	x, y = list(map(int, message["id"].split(" ")))
+	change_turn = game.click(player, x, y)
+	if change_turn:
 		await broadcast(json.dumps({"type":"turn", "team":td.TURN.name}))
 		await broadcast(json.dumps({"type":"entry", "entry":""}))
 	await broadcast(json.dumps({"type":"uncovered", "uncovered":td.UNCOVERED}))
 	
 async def teamchange_handler(message, player):
-	if player.nick == "":
-		return
-	print("Changing team of player " + player.nick + " to " + message["team"])
-	player.team = {'red': td.Team.RED, 'blue': td.Team.BLUE, 'spec': td.Team.SPEC}[message["team"]]
-	player.capt = False
+	game.change_team(player, message["team"])
 	await broadcast_player_list()
 
 async def capt_handler(message, player):
-	if player.nick == "":
-		return
-	print("Making player " + player.nick + " a captain of team " + message["team"])
-	player.team = {'red': td.Team.RED, 'blue': td.Team.BLUE}[message["team"]]
-	player.capt = True
+	game.make_captain(player, message["team"])
 	await broadcast_player_list()
 
 async def entry_handler(message, player):
-	if not player.capt or player.team != td.TURN:
-		return
-	td.ENTRY = message["entry"]
-	td.CLICKS_REMAINING = int(message["entrynumber"])
+	game.accept_entry(player, message["entry"], int(message["entrynumber"]))
 	await broadcast(json.dumps({"type":"entry", "entry":td.ENTRY, "number":td.CLICKS_REMAINING}))
 
 async def message_handler(message, player):
