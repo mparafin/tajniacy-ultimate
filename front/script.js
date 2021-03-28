@@ -29,6 +29,15 @@ function init_captbutton(team) {
 	}
 }
 
+function init_teambuttons() {
+	teamNames.forEach(team => {
+		init_teamchanger(team);
+		if (team !== "spec") {
+			init_captbutton(team);
+		}
+	});
+}
+
 function init_entrybutton() {
 	document.getElementById("entrybutton").onclick = function () {
 		let entry = document.getElementById("entry").value;
@@ -36,6 +45,16 @@ function init_entrybutton() {
 		socket.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
 	}
 }
+
+function init_reset_buttons() {
+	document.getElementById("resetgame").onclick = function () {
+		socket.send(JSON.stringify({"type":"resetgame"}));
+	}
+	document.getElementById("resetsecret").onclick = function () {
+		socket.send(JSON.stringify({"type":"resetsecret"}));
+	}
+}
+
 
 // -------- HELPER FUNCTIONS -------
 
@@ -49,6 +68,14 @@ function be_deckhand() {
 	document.getElementById("captred").style.visibility = "visible";
 	document.getElementById("captblue").style.visibility = "visible";
 	document.getElementById("captain_stuff").style.display = "none";
+	for(let i=0; i < matrix.rows.length; i++) {
+		const row = matrix.rows[i];
+		for(let j=0; j < row.cells.length; j++) {
+			const cell = row.cells[j];
+			cell.style.backgroundColor = "white";
+		}
+	}
+
 }
 
 // -------- PROTOCOL HANDLERS -------
@@ -104,6 +131,7 @@ function matrix_handler(message) {
 		for (let j = 0; j < row.cells.length; j++) {
 			const cell = row.cells[j];
 			cell.textContent = data[i][j];
+			cell.style.backgroundColor = "white";
 		}
 	}
 
@@ -111,19 +139,7 @@ function matrix_handler(message) {
 }
 
 function entry_handler(message) {
-	if (message["entry"] === "") {
-		document.getElementById("entrydiv").style.visibility = "hidden";
-		document.getElementById("captain_stuff").style.visibility = "visible";
-		return;
-	}
-	document.getElementById("entrydiv").style.visibility = "visible";
-	document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
-	document.getElementById("entrynumberdisplay").textContent = message["number"];
-	document.getElementById("captain_stuff").style.visibility = 'hidden';
-}
-
-function turn_handler(message) {
-	switch (message["team"]) {
+	switch (message["turn"]) {
 		case "RED":
 			document.querySelector("body").style.backgroundColor = "rgba(255, 0, 0, 0.1)";
 			break;
@@ -134,6 +150,34 @@ function turn_handler(message) {
 			console.log("Interesting, turn of team " + message["team"]);
 			break;
 	} 
+
+	if (message["entry"] === "") {
+		document.getElementById("entrydiv").style.display = "none";
+		document.getElementById("captain_stuff").style.visibility = "visible";
+		return;
+	}
+	document.getElementById("entrydiv").style.display = "flex";
+	document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
+	document.getElementById("entrynumberdisplay").textContent = message["number"];
+	document.getElementById("captain_stuff").style.visibility = 'hidden';
+
+}
+
+function secret_handler(message) {
+	data = message["secret"];
+	colors = {
+		"RED":"rgba(255,0,0,0.2)",
+		"BLUE":"rgba(100,149,237,0.2)",
+		"SPEC":"rgba(245,222,179,0.2)",
+		"KILLER":"rgba(0,0,0,0.3)"
+	}
+	for(let i=0; i < matrix.rows.length; i++) {
+		const row = matrix.rows[i];
+		for(let j=0; j < row.cells.length; j++) {
+			const cell = row.cells[j];
+			cell.style.backgroundColor = colors[data[i][j]];
+		}
+	}
 }
 
 function echo_handler(message) {
@@ -146,21 +190,16 @@ handlers = {
 	"matrix": matrix_handler,
 	"uncovered": uncovered_handler,
 	"entry": entry_handler,
-	"turn": turn_handler,
+	"secret": secret_handler,
 	"echo": echo_handler,
 }
 
 // ------------------ START -----------------
 
 init_namechanger();
+init_teambuttons();
 init_entrybutton();
-
-teamNames.forEach(team => {
-	init_teamchanger(team);
-	if (team !== "spec") {
-		init_captbutton(team);
-	}
-});
+init_reset_buttons();
 
 matrix = document.getElementById("matrix");
 matrix.setAttribute('border', '1');

@@ -4,6 +4,29 @@ import asyncio
 import tajniacy_definitions as td
 import tajniacy_game as game
 
+def protocol(key):
+	return {
+	"matrix":json.dumps({
+		"type":"matrix",
+		"matrix":td.MATRIX,
+		"uncovered":td.UNCOVERED
+		}),
+	"uncovered":json.dumps({
+		"type":"uncovered",
+		"uncovered":td.UNCOVERED
+		}),
+	"entry":json.dumps({
+		"type":"entry",
+		"entry":td.ENTRY,
+		"number":td.CLICKS_REMAINING,
+		"turn":td.TURN.name
+		}),
+	"secret":json.dumps({
+		"type":"secret",
+		"secret":td.SECRET
+		})
+	}[key]
+
 def player_list(player):
 	result = {}
 	result["type"] = "player_list"
@@ -11,7 +34,7 @@ def player_list(player):
 	result["blue"] = list()
 	result["spec"] = list()
 	for p in td.PLAYERS:
-		if p.nick == "" or p.nick == player.nick:
+		if p == player:
 			continue
 		{
 			td.Team.RED: lambda p: result["red"].append({"nick":p.nick, "capt":p.capt}),
@@ -23,11 +46,12 @@ def player_list(player):
 		result["secret"] = td.SECRET
 	return json.dumps(result)
 
-async def broadcast_player_list():
-	await asyncio.gather(*[p.socket.send(player_list(p)) for p in td.PLAYERS])
-
 async def broadcast(message):
 	await asyncio.gather(*[p.socket.send(message) for p in td.PLAYERS])
+
+async def broadcast_player_list():
+	await asyncio.gather(*[p.socket.send(player_list(p)) for p in td.PLAYERS])
+	await broadcast(protocol("uncovered"))
 
 async def name_handler(message, player):
 	game.change_name(player, message["nick"])
@@ -37,9 +61,8 @@ async def click_handler(message, player):
 	x, y = list(map(int, message["id"].split(" ")))
 	change_turn = game.click(player, x, y)
 	if change_turn:
-		await broadcast(json.dumps({"type":"turn", "team":td.TURN.name}))
-		await broadcast(json.dumps({"type":"entry", "entry":""}))
-	await broadcast(json.dumps({"type":"uncovered", "uncovered":td.UNCOVERED}))
+		await broadcast(protocol("entry"))
+	await broadcast(protocol("uncovered"))
 	
 async def teamchange_handler(message, player):
 	game.change_team(player, message["team"])
@@ -47,11 +70,32 @@ async def teamchange_handler(message, player):
 
 async def capt_handler(message, player):
 	game.make_captain(player, message["team"])
+	await player.socket.send(protocol("secret"))
 	await broadcast_player_list()
 
 async def entry_handler(message, player):
-	game.accept_entry(player, message["entry"], int(message["entrynumber"]))
-	await broadcast(json.dumps({"type":"entry", "entry":td.ENTRY, "number":td.CLICKS_REMAINING}))
+	ok = game.accept_entry(player, message["entry"], int(message["entrynumber"]))
+	if ok:
+		await broadcast(protocol("entry"))
+
+async def reset_game_handler(message, player):
+	game.reset_matrix()
+	game.reset_secret()
+	print("Game reset")
+	await broadcast(protocol("matrix"))
+	await broadcast(protocol("entry"))
+	for p in td.PLAYERS:
+		if p.capt:
+			await p.socket.send(protocol("secret"))
+
+
+async def reset_secret_handler(message, player):
+	game.reset_secret()
+	print("Secret reset")
+	await broadcast(protocol("uncovered"))
+	for p in td.PLAYERS:
+		if p.capt:
+			await p.socket.send(protocol("secret"))
 
 async def message_handler(message, player):
 	await {
@@ -60,6 +104,8 @@ async def message_handler(message, player):
 		'teamchange': teamchange_handler,
 		'capt': capt_handler,
 		'entry': entry_handler,
+		'resetgame': reset_game_handler,
+		'resetsecret': reset_secret_handler
 	}[message["type"]](message, player)
 
 async def client_handler(websocket, path):
@@ -69,10 +115,9 @@ async def client_handler(websocket, path):
 
 	# send game state
 	await websocket.send(player_list(p))
-	await websocket.send(json.dumps({"type":"matrix", "matrix":td.MATRIX, "uncovered":td.UNCOVERED}))
-	await websocket.send(json.dumps({"type":"turn", "team":td.TURN.name}))
-	if td.CLICKS_REMAINING >= 0:
-		await broadcast(json.dumps({"type":"entry", "entry":td.ENTRY, "number":td.CLICKS_REMAINING}))
+	await websocket.send(protocol("matrix"))
+	await websocket.send(protocol("entry"))
+
 	
 	print("Entering echo mode")
 	try:

@@ -68,12 +68,10 @@ def click(player, x, y):
 
 	td.UNCOVERED[id] = td.SECRET[x][y]
 	print("Clicked on card " + id + " (\"" + td.MATRIX[x][y] + "\")")
-
 	td.CLICKS_REMAINING -= 1
-	if td.CLICKS_REMAINING < 0:
-		return True
-	if player.team.name != td.SECRET[x][y]:
+	if player.team.name != td.SECRET[x][y] or td.CLICKS_REMAINING < 0:
 		td.CLICKS_REMAINING = -1
+		td.ENTRY = ""
 		td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
 		return True
 	return False
@@ -94,6 +92,9 @@ def make_captain(player, team):
 
 def accept_entry(player, entry, number):
 	if not player.capt or player.team != td.TURN:
-		return
+		return False
 	td.ENTRY = entry
 	td.CLICKS_REMAINING = number
+	if number == 0:
+		td.CLICKS_REMAINING = 999
+	return True

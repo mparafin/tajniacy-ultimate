@@ -28,8 +28,8 @@
 <body>
     <div id="header" style="display: flex; flex-direction: row;">
         <div style="width: 20%;">
-            <div style="display: flex; flex-direction: row;">
-                <input type="text" id='nick' placeholder="Jak się nazywasz?" style="margin-bottom: 0.25em;"></input>
+            <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 0.25em;">
+                <input type="text" id='nick' placeholder="Jak się nazywasz?"></input>
                 <button id="namechanger" style="margin-left: 0.5em;">Ok</button><br>
             </div>
             <div style="display: flex; flex-direction: row;">
@@ -42,7 +42,7 @@
             </div>
             <button id="joinspec" class="teambutton" style="background-color: whitesmoke;">Zostań Obserwatorem</button>
         </div>
-        <div style="width: 60%; float: left;">
+        <div style="width: 60%;">
             <h1 style="text-align: center;">Tajniacy ultimate</h1>
             <div style="display: flex; flex-direction: row;">
                 <div id='red' style="width: 50%; display: flex; flex-direction: column; background-color: lightcoral;">
@@ -59,18 +59,30 @@
                 <div id="specteam" style="width: 100%; display: flex; flex-direction: column; background-color: rgb(240, 240, 240);"></div>
             </div>
         </div>
+        <div style="width: 20%; display: flex; flex-direction: row; justify-content: flex-end;">
+            <div style="display: flex; flex-direction: column;">
+                <button id="resetgame">Nowe rozdanie</button>
+                <button id="showwordmenu">Wybierz słowa... &lt;&lt;&lt;</button>
+            </div>
+        </div>
     </div>
     <div style="width: 70%; height: 70vh; margin: auto; margin-top: 1em; margin-bottom: 1em;">
         <table id="matrix" style="table-layout: fixed; width: 100%; height: 100%; border-spacing: 5px; border: hidden;"></table>
     </div>
-    <div id="entrydiv" style="width: 70%; margin: auto; display: flex; flex-direction: row; justify-content: space-evenly; visibility: hidden;">
+    <div id="entrydiv" style="width: 70%; margin: auto; display: none; flex-direction: row; justify-content: space-evenly;">
         <div id="entrytextdisplay" class="entrytext">A kto to przyszedł? Nie zaglądać tutaj, nic tu ciekawego nie ma</div>
         <div id="entrynumberdisplay" class="entrytext"></div>
     </div>
-    <div id="captain_stuff" style="width: 70%; margin: auto; display: none; flex-direction: row; justify-content: center;">
-        <input id="entry" type="text" placeholder="Hasło..." style="border-radius: 5px; margin: 0 0.5em;">
-        <select id="entrynumber" style="margin: 0 0.5em;"></select>
-        <button id="entrybutton" style="margin: 0 0.5em;">Ok!</button>
+    <div id="captain_stuff" style="width: 100%;">
+        <div style="width: 15%; align-items: center;"></div> 
+        <div style="width: 70%; margin: auto; display: flex; flex-direction: row; justify-content: center; font-size: 1.5em;">
+            <input id="entry" type="text" placeholder="Hasło..." style="border-radius: 5px; margin: 0 0.5em;">
+            <select id="entrynumber" style="margin: 0 0.5em;"></select>
+            <button id="entrybutton" style="margin: 0 0.5em;">Ok!</button>
+        </div>
+        <div style="width: 15%;">
+            <button id="resetsecret" style="float: right;">Zmień rozkład kolorów</button>
+        </div>
     </div>
     <script type="text/javascript" src="script.js"></script>
 </body>
