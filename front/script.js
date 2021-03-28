@@ -117,7 +117,8 @@ function entry_handler(message) {
 		return;
 	}
 	document.getElementById("entrydiv").style.visibility = "visible";
-	document.getElementById("entrytext").textContent = message["entry"].toUpperCase();
+	document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
+	document.getElementById("entrynumberdisplay").textContent = message["number"];
 	document.getElementById("captain_stuff").style.visibility = 'hidden';
 }
 

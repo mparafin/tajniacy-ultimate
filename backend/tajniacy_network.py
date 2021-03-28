@@ -37,11 +37,7 @@ async def name_handler(message, player):
 	await broadcast_player_list()
 
 async def click_handler(message, player):
-	if player.team != td.TURN:
-		return
-	if player.capt:
-		return
-	if td.CLICKS_REMAINING < 0:
+	if player.team != td.TURN or td.CLICKS_REMAINING < 0 or player.capt:
 		return
 	td.CLICKS_REMAINING -= 1
 
@@ -72,7 +68,7 @@ async def capt_handler(message, player):
 	await broadcast_player_list()
 
 async def entry_handler(message, player):
-	if not player.capt:
+	if not player.capt or player.team != td.TURN:
 		return
 	td.ENTRY = message["entry"]
 	td.CLICKS_REMAINING = int(message["entrynumber"])
