@@ -1,7 +1,10 @@
+import os
+import random
 import tajniacy_definitions as td
 
 def reset_matrix():
 	td.MATRIX.clear()
+	td.ENTRY = ""
 
 	words = set()
 	filenames = os.listdir("./db")
@@ -23,6 +26,7 @@ def reset_matrix():
 def reset_secret():
 	td.SECRET.clear()
 	td.UNCOVERED.clear()
+	td.CLICKS_REMAINING = -1
 	td.PREV_BEGINNER = True if td.PREV_BEGINNER == False else False
 
 	tokens = list()

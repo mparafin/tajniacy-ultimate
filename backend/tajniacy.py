@@ -1,16 +1,12 @@
-import os
 import asyncio
 import websockets
-import json
-import enum
-import random
 import socket
 
 import tajniacy_definitions as td
 import tajniacy_game as game
 import tajniacy_network as tn
 
-	
+
 async def main():
 	td.init()
 	game.reset_matrix()
