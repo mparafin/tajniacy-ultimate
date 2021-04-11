@@ -1,2 +1,4 @@
 .vscode/*
 backend/__pycache__/*
+backend/db/*
+todo.txt
