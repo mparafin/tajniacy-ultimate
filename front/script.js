@@ -17,6 +17,7 @@ PHASE = "capt";
 function init_namechanger() {
 	document.getElementById("namechanger").onclick = function () {
 		let nick = document.getElementById("nick").value;
+		nick = nick.substring(0, 64);
 		SOCKET.send(JSON.stringify({"type":"nick", "nick":nick}));
 	}
 }
@@ -45,6 +46,7 @@ function init_teambuttons() {
 function init_entrybutton() {
 	document.getElementById("entrybutton").onclick = function () {
 		let entry = document.getElementById("entry").value;
+		entry = entry.substring(0, 32);
 		let entrynumber = document.getElementById("entrynumber").value;
 		if (ENTRY_REGEXP.test(entry)) {
 			console.log("Incorrect entry string!");
