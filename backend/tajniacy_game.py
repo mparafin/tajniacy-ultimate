@@ -93,24 +93,30 @@ def click(player, x, y):
 
 def change_team(player, team):
 	if player.nick == "":
-		return
+		return "Najpierw wpisz swój nick!"
 	print("Changing team of player " + player.nick + " to " + team)
 	player.team = {'red': td.Team.RED, 'blue': td.Team.BLUE, 'spec': td.Team.SPEC}[team]
 	player.capt = False
+	return None
 
 def make_captain(player, team):
 	if player.nick == "":
-		return
+		return "Najpierw wpisz swój nick!"
+	tdteam = {'red': td.Team.RED, 'blue': td.Team.BLUE}[team]
+	for p in td.PLAYERS:
+		if p.capt and p.team == tdteam:
+			return "Może być tylko jeden kapitan drużyny!"
 	print("Making player " + player.nick + " a captain of team " + team)
-	player.team = {'red': td.Team.RED, 'blue': td.Team.BLUE}[team]
+	player.team = tdteam
 	player.capt = True
+	return None
 
 def accept_entry(player, entry, number):
 	if not player.capt or player.team != td.TURN:
-		return False
+		return "Nie tak szybko, cwaniaku."
 	td.ENTRY = entry
 	td.ENTRY_NUMBER = number
 	td.CLICKS_REMAINING = number
 	if number == 0:
 		td.CLICKS_REMAINING = 999
-	return True
+	return None

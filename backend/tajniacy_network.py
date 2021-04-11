@@ -77,6 +77,7 @@ async def click_handler(message, player):
 
 async def pass_handler(message, player):
 	if player.team != td.TURN or td.TURN == td.Team.SPEC:
+		await player.socket.send(protocol("alert", "Nie Twoja tura, cwaniaku."))
 		return
 	td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
 	td.ENTRY = ""
@@ -84,20 +85,28 @@ async def pass_handler(message, player):
 	await broadcast(protocol("entry"))
 	
 async def teamchange_handler(message, player):
-	game.change_team(player, message["team"])
+	err = game.change_team(player, message["team"])
+	if err:
+		await player.socket.send(protocol("alert", err))
+		return
 	await broadcast_player_list()
 	await player.socket.send(protocol("uncovered"))
 
 async def capt_handler(message, player):
-	game.make_captain(player, message["team"])
+	err = game.make_captain(player, message["team"])
+	if err:
+		await player.socket.send(protocol("alert", err))
+		return
 	await player.socket.send(protocol("secret"))
 	await broadcast_player_list()
 	await player.socket.send(protocol("uncovered"))
 
 async def entry_handler(message, player):
-	ok = game.accept_entry(player, message["entry"], int(message["entrynumber"]))
-	if ok:
-		await broadcast(protocol("entry"))
+	err = game.accept_entry(player, message["entry"], int(message["entrynumber"]))
+	if err:
+		await player.socket.send(protocol("alert",err))
+		return
+	await broadcast(protocol("entry"))
 
 async def reset_game_handler(message, player):
 	err = game.reset_matrix()
