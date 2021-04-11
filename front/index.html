@@ -37,13 +37,13 @@
 		}
 	</style>
 </head>
-<body>
-	<div id="header" style="display: flex; flex-direction: row;">
-		<div style="width: 20%;">
-			<div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 0.25em;">
+<body style="font-family: 'Comic Sans MS';">
+	<div style="display: flex; flex-direction: row; align-items: center; margin: 0.25em;">
 				<input type="text" id='nick' placeholder="Jak się nazywasz?"></input>
 				<button id="namechanger" style="margin-left: 0.5em;">Ok</button><br>
 			</div>
+	<div id="header" style="display: flex; flex-direction: row; height: 23vh;">
+		<div style="width: 20%;">
 			<div style="display: flex; flex-direction: row;">
 				<button id="joinred" class="teambutton" style="background-color: lightcoral;">Dołącz do Czerwonych</button><br>
 				<button id="captred" class="captbutton" title="Zostań kapitanem drużyny" style="background-color: indianred;">👑</button>
@@ -81,8 +81,9 @@
 	<div style="width: 70%; height: 50vh; margin: auto; margin-top: 1em; margin-bottom: 1em;">
 		<table id="matrix" style="table-layout: fixed; width: 100%; height: 100%; border-spacing: 5px; border: hidden;"></table>
 	</div>
+	<div id="footer">
 	<div style="display: flex; flex-direction: row; justify-content: center; visibility: hidden;">
-		<button id="pass">Pass</button>
+			<button id="pass" style="border-radius: 1em; width: 10em; height: 3em;">Pass</button>
 	</div>
 	<div id="entrydiv" style="width: 70%; margin: auto; display: none; flex-direction: row; justify-content: space-evenly;">
 		<div id="entrytextdisplay" class="entrytext">A kto to przyszedł? Nie zaglądać tutaj, nic tu ciekawego nie ma</div>
