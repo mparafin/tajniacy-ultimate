@@ -103,6 +103,7 @@ function be_captain() {
 	document.getElementById("captain_stuff").style.display = "flex";
 	document.getElementById("captain_stuff").style.visibility =
 			(TEAM === TURN && PHASE === "capt") ? "visible" : "hidden";
+	document.getElementById("join"+TEAM).textContent = "Abdykuj";
 }
 
 function be_deckhand() {
@@ -110,21 +111,24 @@ function be_deckhand() {
 	document.getElementById("captblue").style.visibility = "visible";
 	document.getElementById("captain_stuff").style.display = "none";
 	if (CAPT) {
-	for(let i=0; i < matrix.rows.length; i++) {
-		const row = matrix.rows[i];
-		for(let j=0; j < row.cells.length; j++) {
-			const cell = row.cells[j];
-			cell.style.backgroundColor = "white";
+		for(let i=0; i < matrix.rows.length; i++) {
+			const row = matrix.rows[i];
+			for(let j=0; j < row.cells.length; j++) {
+				const cell = row.cells[j];
+				cell.style.backgroundColor = "white";
+			}
 		}
 	}
-
-}
 	CAPT = false;
 }
 
 // -------- PROTOCOL HANDLERS -------
 
 function player_list_handler(message) {
+	// reset teambutton texts
+	document.getElementById("joinred").textContent = "Dołącz do Czerwonych";
+	document.getElementById("joinblue").textContent = "Dołącz do Niebieskich";
+
 	TEAM_NAMES.forEach(team => {
 		elementName = team + "team";
 		let t = document.getElementById(elementName);
