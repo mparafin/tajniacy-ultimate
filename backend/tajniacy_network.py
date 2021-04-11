@@ -10,21 +10,25 @@ def protocol(key):
 		"type":"matrix",
 		"matrix":td.MATRIX,
 		"uncovered":td.UNCOVERED
-		}),
+	}),
 	"uncovered":json.dumps({
 		"type":"uncovered",
 		"uncovered":td.UNCOVERED
-		}),
+	}),
 	"entry":json.dumps({
 		"type":"entry",
 		"entry":td.ENTRY,
 		"number":td.CLICKS_REMAINING,
 		"turn":td.TURN.name
-		}),
+	}),
 	"secret":json.dumps({
 		"type":"secret",
 		"secret":td.SECRET
-		})
+	}),
+	"file_list":json.dumps({
+		"type":"file_list",
+		"files":game.file_list()
+	})
 	}[key]
 
 def player_list(player):
@@ -63,7 +67,7 @@ async def click_handler(message, player):
 	if change_turn:
 		await broadcast(protocol("entry"))
 	await broadcast(protocol("uncovered"))
-	
+
 async def pass_handler(message, player):
 	td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
 	td.ENTRY = ""
@@ -103,6 +107,11 @@ async def reset_secret_handler(message, player):
 		if p.capt:
 			await p.socket.send(protocol("secret"))
 
+async def file_list_handler(message, player):
+	game.update_file_list(message["files"])
+	await broadcast(protocol("file_list"))
+	
+
 async def message_handler(message, player):
 	await {
 		'nick': name_handler,
@@ -112,7 +121,8 @@ async def message_handler(message, player):
 		'capt': capt_handler,
 		'entry': entry_handler,
 		'resetgame': reset_game_handler,
-		'resetsecret': reset_secret_handler
+		'resetsecret': reset_secret_handler,
+		'file_list': file_list_handler,
 	}[message["type"]](message, player)
 
 async def client_handler(websocket, path):
@@ -124,6 +134,7 @@ async def client_handler(websocket, path):
 	await websocket.send(player_list(p))
 	await websocket.send(protocol("matrix"))
 	await websocket.send(protocol("entry"))
+	await websocket.send(protocol("file_list"))
 
 	
 	print("Entering echo mode")

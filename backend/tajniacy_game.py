@@ -2,6 +2,19 @@ import os
 import random
 import tajniacy_definitions as td
 
+def file_list():
+	filenames = []
+	for file in os.listdir(("./db")):
+		filenames.append(os.path.splitext(file)[0])
+	return filenames
+
+def update_file_list(files):
+	td.FILE_LIST.clear()
+	for file in files:
+		td.FILE_LIST.append(file)
+	print("flhandler:")
+	print(td.FILE_LIST)
+
 def reset_matrix():
 	td.MATRIX.clear()
 	td.ENTRY = ""

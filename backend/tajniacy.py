@@ -11,6 +11,7 @@ async def main():
 	td.init()
 	game.reset_matrix()
 	game.reset_secret()
+	game.file_list()
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(("8.8.8.8", 80))

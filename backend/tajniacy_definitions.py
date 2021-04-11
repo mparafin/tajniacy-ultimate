@@ -41,3 +41,7 @@ def init():
 	# how many clicks remaining for the current team
 	global CLICKS_REMAINING
 	CLICKS_REMAINING = -1
+
+	# which files to take words from
+	global FILE_LIST
+	FILE_LIST = []
