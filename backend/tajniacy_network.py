@@ -28,6 +28,10 @@ def protocol(key):
 	"file_list":json.dumps({
 		"type":"file_list",
 		"files":game.file_list()
+	}),
+	"file_choice":json.dumps({
+		"type":"file_choice",
+		"files":td.FILE_CHOICE
 	})
 	}[key]
 
@@ -107,9 +111,11 @@ async def reset_secret_handler(message, player):
 		if p.capt:
 			await p.socket.send(protocol("secret"))
 
-async def file_list_handler(message, player):
-	game.update_file_list(message["files"])
-	await broadcast(protocol("file_list"))
+async def file_choice_handler(message, player):
+	game.update_file_choice(message["files"])
+	print("File choice updated to: ")
+	print(td.FILE_CHOICE)
+	await broadcast(protocol("file_choice"))
 	
 
 async def message_handler(message, player):
@@ -122,7 +128,7 @@ async def message_handler(message, player):
 		'entry': entry_handler,
 		'resetgame': reset_game_handler,
 		'resetsecret': reset_secret_handler,
-		'file_list': file_list_handler,
+		'file_choice': file_choice_handler,
 	}[message["type"]](message, player)
 
 async def client_handler(websocket, path):
@@ -135,6 +141,7 @@ async def client_handler(websocket, path):
 	await websocket.send(protocol("matrix"))
 	await websocket.send(protocol("entry"))
 	await websocket.send(protocol("file_list"))
+	await websocket.send(protocol("file_choice"))
 
 	
 	print("Entering echo mode")

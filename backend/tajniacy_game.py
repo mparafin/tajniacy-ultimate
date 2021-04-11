@@ -8,12 +8,11 @@ def file_list():
 		filenames.append(os.path.splitext(file)[0])
 	return filenames
 
-def update_file_list(files):
-	td.FILE_LIST.clear()
+def update_file_choice(files):
+	td.FILE_CHOICE.clear()
 	for file in files:
-		td.FILE_LIST.append(file)
-	print("flhandler:")
-	print(td.FILE_LIST)
+		td.FILE_CHOICE.append(file)
+	
 
 def reset_matrix():
 	td.MATRIX.clear()

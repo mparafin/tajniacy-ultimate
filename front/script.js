@@ -81,7 +81,7 @@ function send_selected_files() {
 			files.push(filename.textContent);
 		}
 	})
-	socket.send(JSON.stringify({"type":"file_list", "files":files}));
+	socket.send(JSON.stringify({"type":"file_choice", "files":files}));
 }
 
 // -------- HELPER FUNCTIONS -------
@@ -216,6 +216,7 @@ function file_list_handler(message) {
 	}
 	message["files"].forEach(file => {
 		let div = document.createElement("div");
+		div.id = "file_" + file;
 		div.style.display = "flex";
 		div.style.flexDirection = "row";
 		div.style.alignContent = "center";
@@ -235,6 +236,14 @@ function file_list_handler(message) {
 	document.getElementById("wordssidebar").append(sendbutt);
 }
 
+function file_choice_handler(message) {
+	let file_choice = new Set(message["files"]);
+	let file_list = document.getElementById("wordsmenu");
+	file_list.childNodes.forEach(div => {
+		div.childNodes[0].checked = file_choice.has(div.childNodes[1].textContent);
+	})
+}
+
 function echo_handler(message) {
 	console.log("Echo from server:\n");
 	console.log(JSON.stringify(message["data"]));
@@ -247,6 +256,7 @@ handlers = {
 	"entry": entry_handler,
 	"secret": secret_handler,
 	"file_list": file_list_handler,
+	"file_choice": file_choice_handler,
 	"echo": echo_handler,
 }
 

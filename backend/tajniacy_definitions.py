@@ -43,5 +43,5 @@ def init():
 	CLICKS_REMAINING = -1
 
 	# which files to take words from
-	global FILE_LIST
-	FILE_LIST = []
+	global FILE_CHOICE
+	FILE_CHOICE = []
