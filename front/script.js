@@ -1,5 +1,4 @@
 // ------ GLOBALS ------
-console.log(location.host)
 const SOCKET = new WebSocket('ws://'+ location.host + ':8888');
 const TEAM_NAMES = ["red", "blue", "spec"];
 const TILE_COLORS = {
@@ -8,6 +7,7 @@ const TILE_COLORS = {
 	"SPEC":"wheat",
 	"KILLER":"black"
 };
+const ENTRY_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżź]/i;
 TEAM = "spec";
 TURN = "spec";
 PHASE = "capt";
@@ -46,6 +46,10 @@ function init_entrybutton() {
 	document.getElementById("entrybutton").onclick = function () {
 		let entry = document.getElementById("entry").value;
 		let entrynumber = document.getElementById("entrynumber").value;
+		if (ENTRY_REGEXP.test(entry)) {
+			console.log("Incorrect entry string!");
+			return;
+		}
 		SOCKET.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
 	}
 }
@@ -205,9 +209,9 @@ function entry_handler(message) {
 	} else {
 		// team thinking phase
 		PHASE = "team";
-	document.getElementById("entrydiv").style.display = "flex";
-	document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
-	document.getElementById("entrynumberdisplay").textContent = message["number"];
+		document.getElementById("entrydiv").style.display = "flex";
+		document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
+		document.getElementById("entrynumberdisplay").textContent = message["number"];
 		document.getElementById("pass").style.visibility =
 			TEAM === TURN ? "visible" : "hidden";
 		document.getElementById("captain_stuff").style.visibility = "hidden";
