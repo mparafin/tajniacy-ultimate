@@ -1,37 +1,40 @@
 // ------ GLOBALS ------
 console.log(location.host)
-socket = new WebSocket('ws://'+ location.host + ':8888');
-teamNames = ["red", "blue", "spec"]
-tileColors = {
+const SOCKET = new WebSocket('ws://'+ location.host + ':8888');
+const TEAM_NAMES = ["red", "blue", "spec"];
+const TILE_COLORS = {
 	"RED":"lightcoral",
 	"BLUE":"lightskyblue",
 	"SPEC":"wheat",
 	"KILLER":"black"
-}
+};
+TEAM = "spec";
+TURN = "spec";
+PHASE = "capt";
 
 // ------ BUTTONS ------
 
 function init_namechanger() {
 	document.getElementById("namechanger").onclick = function () {
 		let nick = document.getElementById("nick").value;
-		socket.send(JSON.stringify({"type":"nick", "nick":nick}));
+		SOCKET.send(JSON.stringify({"type":"nick", "nick":nick}));
 	}
 }
 
 function init_teamchanger(team) {
 	document.getElementById("join"+team).onclick = function () {
-		socket.send(JSON.stringify({"type":"teamchange", "team":team}));
+		SOCKET.send(JSON.stringify({"type":"teamchange", "team":team}));
 	}
 }
 
 function init_captbutton(team) {
 	document.getElementById("capt"+team).onclick = function () {
-		socket.send(JSON.stringify({"type":"capt", "team":team}));
+		SOCKET.send(JSON.stringify({"type":"capt", "team":team}));
 	}
 }
 
 function init_teambuttons() {
-	teamNames.forEach(team => {
+	TEAM_NAMES.forEach(team => {
 		init_teamchanger(team);
 		if (team !== "spec") {
 			init_captbutton(team);
@@ -43,22 +46,22 @@ function init_entrybutton() {
 	document.getElementById("entrybutton").onclick = function () {
 		let entry = document.getElementById("entry").value;
 		let entrynumber = document.getElementById("entrynumber").value;
-		socket.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
+		SOCKET.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
 	}
 }
 
 function init_reset_buttons() {
 	document.getElementById("resetgame").onclick = function () {
-		socket.send(JSON.stringify({"type":"resetgame"}));
+		SOCKET.send(JSON.stringify({"type":"resetgame"}));
 	}
 	document.getElementById("resetsecret").onclick = function () {
-		socket.send(JSON.stringify({"type":"resetsecret"}));
+		SOCKET.send(JSON.stringify({"type":"resetsecret"}));
 	}
 }
 
 function init_pass_button() {
 	document.getElementById("pass").onclick = function () {
-		socket.send(JSON.stringify({"type":"pass"}))
+		SOCKET.send(JSON.stringify({"type":"pass"}))
 	}
 }
 
@@ -81,7 +84,7 @@ function send_selected_files() {
 			files.push(filename.textContent);
 		}
 	})
-	socket.send(JSON.stringify({"type":"file_choice", "files":files}));
+	SOCKET.send(JSON.stringify({"type":"file_choice", "files":files}));
 }
 
 // -------- HELPER FUNCTIONS -------
@@ -90,6 +93,8 @@ function be_captain() {
 	document.getElementById("captred").style.visibility = "hidden";
 	document.getElementById("captblue").style.visibility = "hidden";
 	document.getElementById("captain_stuff").style.display = "flex";
+	document.getElementById("captain_stuff").style.visibility =
+			(TEAM === TURN && PHASE === "capt") ? "visible" : "hidden";
 }
 
 function be_deckhand() {
@@ -109,13 +114,21 @@ function be_deckhand() {
 // -------- PROTOCOL HANDLERS -------
 
 function player_list_handler(message) {
-	teamNames.forEach(team => {
+	TEAM_NAMES.forEach(team => {
 		elementName = team + "team";
 		let t = document.getElementById(elementName);
 		while(t.firstChild) {
 			t.removeChild(t.lastChild);
 		}
 		if (message["player"].team.toLowerCase() === team) {
+			// update player team
+			TEAM = team;
+
+			// determine "pass" button visibility
+			document.getElementById("pass").style.visibility = 
+					(TEAM === TURN && PHASE === "team") ? "visible" : "hidden";
+		
+			// create first entry in team list for player
 			p = document.createElement("div");
 			p.textContent = message["player"].nick;
 			p.style.color = "rgb(0, 100, 10)";
@@ -128,6 +141,7 @@ function player_list_handler(message) {
 			}
 			t.appendChild(p);
 		}
+		// create an entry for every other player
 		message[team].forEach(player => {
 			p = document.createElement("div");
 			p.textContent = player["nick"];
@@ -168,6 +182,7 @@ function matrix_handler(message) {
 }
 
 function entry_handler(message) {
+	TURN = message["turn"].toLowerCase();
 	switch (message["turn"]) {
 		case "RED":
 			document.querySelector("body").style.backgroundColor = "rgba(255, 0, 0, 0.1)";
@@ -181,15 +196,22 @@ function entry_handler(message) {
 	} 
 
 	if (message["entry"] === "") {
+		// captain thinking phase
+		PHASE = "capt";
 		document.getElementById("entrydiv").style.display = "none";
-		document.getElementById("captain_stuff").style.visibility = "visible";
-		return;
-	}
+		document.getElementById("captain_stuff").style.visibility =
+			TEAM === TURN ? "visible" : "hidden";
+		document.getElementById("pass").style.visibility = "hidden";
+	} else {
+		// team thinking phase
+		PHASE = "team";
 	document.getElementById("entrydiv").style.display = "flex";
 	document.getElementById("entrytextdisplay").textContent = message["entry"].toUpperCase();
 	document.getElementById("entrynumberdisplay").textContent = message["number"];
-	document.getElementById("captain_stuff").style.visibility = 'hidden';
-
+		document.getElementById("pass").style.visibility =
+			TEAM === TURN ? "visible" : "hidden";
+		document.getElementById("captain_stuff").style.visibility = "hidden";
+	}
 }
 
 function secret_handler(message) {
@@ -282,7 +304,7 @@ for (let i = 0; i < 5; i++) {
 		td.style.backgroundColor = "white";
 		td.textContent = "";
 		td.onclick = function () {
-			socket.send(JSON.stringify({"type":"click", "id":td.id}));
+			SOCKET.send(JSON.stringify({"type":"click", "id":td.id}));
 		}
 		tr.appendChild(td);
 	}
@@ -297,7 +319,7 @@ for (let i = 0; i < 10; i++) {
 	select.appendChild(opt);
 }
 
-socket.onmessage = function(s) {
+SOCKET.onmessage = function(s) {
 	// console.log("Message from server! : " + s.data);
 	try {
 		message = JSON.parse(s.data);	

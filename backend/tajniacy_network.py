@@ -73,6 +73,8 @@ async def click_handler(message, player):
 	await broadcast(protocol("uncovered"))
 
 async def pass_handler(message, player):
+	if player.team != td.TURN or td.TURN == td.Team.SPEC:
+		return
 	td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
 	td.ENTRY = ""
 	td.CLICKS_REMAINING = -1
@@ -137,11 +139,11 @@ async def client_handler(websocket, path):
 	td.PLAYERS.add(p)
 
 	# send game state
-	await websocket.send(player_list(p))
 	await websocket.send(protocol("matrix"))
 	await websocket.send(protocol("entry"))
 	await websocket.send(protocol("file_list"))
 	await websocket.send(protocol("file_choice"))
+	await websocket.send(player_list(p))
 
 	
 	print("Entering echo mode")
