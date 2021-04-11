@@ -1,4 +1,5 @@
 // ------ GLOBALS ------
+console.log(location.host)
 socket = new WebSocket('ws://'+ location.host + ':8888');
 teamNames = ["red", "blue", "spec"]
 tileColors = {
@@ -159,6 +160,7 @@ function matrix_handler(message) {
 			const cell = row.cells[j];
 			cell.textContent = data[i][j];
 			cell.style.backgroundColor = "white";
+			cell.style.color = "black";
 		}
 	}
 
