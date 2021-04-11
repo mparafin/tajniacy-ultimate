@@ -159,7 +159,7 @@ function player_list_handler(message) {
 function uncovered_handler(message) {
 	data = message["uncovered"];
 	Object.keys(data).forEach(key => {
-		document.getElementById(key).style.backgroundColor = tileColors[data[key]];
+		document.getElementById(key).style.backgroundColor = TILE_COLORS[data[key]];
 		if (data[key] === "KILLER") {
 			document.getElementById(key).style.color = "white";
 		}

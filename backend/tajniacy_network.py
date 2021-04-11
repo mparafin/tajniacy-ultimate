@@ -139,11 +139,12 @@ async def client_handler(websocket, path):
 	td.PLAYERS.add(p)
 
 	# send game state
-	await websocket.send(protocol("matrix"))
+	# (the order of the first three is significant)
 	await websocket.send(protocol("entry"))
+	await websocket.send(player_list(p))
+	await websocket.send(protocol("matrix"))
 	await websocket.send(protocol("file_list"))
 	await websocket.send(protocol("file_choice"))
-	await websocket.send(player_list(p))
 
 	
 	print("Entering echo mode")
