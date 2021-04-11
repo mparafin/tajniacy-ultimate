@@ -18,7 +18,7 @@ def protocol(key):
 	"entry":json.dumps({
 		"type":"entry",
 		"entry":td.ENTRY,
-		"number":td.CLICKS_REMAINING,
+		"number":td.ENTRY_NUMBER,
 		"turn":td.TURN.name
 	}),
 	"secret":json.dumps({

@@ -106,6 +106,7 @@ def accept_entry(player, entry, number):
 	if not player.capt or player.team != td.TURN:
 		return False
 	td.ENTRY = entry
+	td.ENTRY_NUMBER = number
 	td.CLICKS_REMAINING = number
 	if number == 0:
 		td.CLICKS_REMAINING = 999

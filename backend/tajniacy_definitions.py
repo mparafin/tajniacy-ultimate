@@ -38,6 +38,9 @@ def init():
 	# current entry (word from captain)
 	global ENTRY
 	ENTRY = ""
+	# current entry number (number from captain)
+	global ENTRY_NUMBER
+	ENTRY_NUMBER = -1
 	# how many clicks remaining for the current team
 	global CLICKS_REMAINING
 	CLICKS_REMAINING = -1
