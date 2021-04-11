@@ -55,6 +55,11 @@ function init_reset_buttons() {
 	}
 }
 
+function init_pass_button() {
+	document.getElementById("pass").onclick = function () {
+		socket.send(JSON.stringify({"type":"pass"}))
+	}
+}
 
 // -------- HELPER FUNCTIONS -------
 
@@ -200,6 +205,7 @@ init_namechanger();
 init_teambuttons();
 init_entrybutton();
 init_reset_buttons();
+init_pass_button();
 
 matrix = document.getElementById("matrix");
 matrix.setAttribute('border', '1');

@@ -64,6 +64,12 @@ async def click_handler(message, player):
 		await broadcast(protocol("entry"))
 	await broadcast(protocol("uncovered"))
 	
+async def pass_handler(message, player):
+	td.TURN = td.Team.RED if td.TURN == td.Team.BLUE else td.Team.BLUE
+	td.ENTRY = ""
+	td.CLICKS_REMAINING = -1
+	await broadcast(protocol("entry"))
+	
 async def teamchange_handler(message, player):
 	game.change_team(player, message["team"])
 	await broadcast_player_list()
@@ -101,6 +107,7 @@ async def message_handler(message, player):
 	await {
 		'nick': name_handler,
 		'click': click_handler,
+		'pass': pass_handler,
 		'teamchange': teamchange_handler,
 		'capt': capt_handler,
 		'entry': entry_handler,
