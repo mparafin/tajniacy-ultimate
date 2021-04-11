@@ -4,7 +4,7 @@ import asyncio
 import tajniacy_definitions as td
 import tajniacy_game as game
 
-def protocol(key):
+def protocol(key, message=None):
 	return {
 	"matrix":json.dumps({
 		"type":"matrix",
@@ -32,6 +32,10 @@ def protocol(key):
 	"file_choice":json.dumps({
 		"type":"file_choice",
 		"files":td.FILE_CHOICE
+	}),
+	"alert":json.dumps({
+		"type":"alert",
+		"message":message
 	})
 	}[key]
 
@@ -95,7 +99,11 @@ async def entry_handler(message, player):
 		await broadcast(protocol("entry"))
 
 async def reset_game_handler(message, player):
-	game.reset_matrix()
+	err = game.reset_matrix()
+	if (err):
+		await player.socket.send(protocol("alert", "Zbyt mało słów! Wybierz więcej zbiorów."))
+		return
+
 	game.reset_secret()
 	print("Game reset")
 	await broadcast(protocol("matrix"))

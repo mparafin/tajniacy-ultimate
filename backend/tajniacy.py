@@ -9,9 +9,9 @@ import tajniacy_network as tn
 
 async def main():
 	td.init()
+	td.FILE_CHOICE.extend(game.file_list())
 	game.reset_matrix()
 	game.reset_secret()
-	td.FILE_CHOICE.extend(game.file_list())
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(("8.8.8.8", 80))

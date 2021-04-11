@@ -270,12 +270,16 @@ function file_choice_handler(message) {
 	})
 }
 
+function alert_handler(message) {
+	alert(message["message"]); //lol
+}
+
 function echo_handler(message) {
 	console.log("Echo from server:\n");
 	console.log(JSON.stringify(message["data"]));
 }
 
-handlers = {
+var handlers = {
 	"player_list": player_list_handler,
 	"matrix": matrix_handler,
 	"uncovered": uncovered_handler,
@@ -283,6 +287,7 @@ handlers = {
 	"secret": secret_handler,
 	"file_list": file_list_handler,
 	"file_choice": file_choice_handler,
+	"alert": alert_handler,
 	"echo": echo_handler,
 }
 

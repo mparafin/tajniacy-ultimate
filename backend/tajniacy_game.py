@@ -15,25 +15,28 @@ def update_file_choice(files):
 	
 
 def reset_matrix():
-	td.MATRIX.clear()
-	td.ENTRY = ""
-
 	words = set()
-	filenames = os.listdir("./db")
+	filenames = td.FILE_CHOICE
 	for file in filenames:
-		path = "./db/"+file
+		path = "./db/"+file+".txt"
 		with open(path, encoding="utf-8") as f:
 			for w in f:
 				w = w.strip("\n,; ")
 				w = w.upper()
 				words.add(w)
 	words = list(words)
+	if len(words) < 25:
+		return "Too few words!"
+	
+	td.MATRIX.clear()
+	td.ENTRY = ""
 	
 	for i in range(5):
 		td.MATRIX.append(list())
 		for j in range(5):
 			td.MATRIX[i].append(random.sample(words, 1)[0])
 			words.remove(td.MATRIX[i][j])
+	return None
 
 def reset_secret():
 	td.SECRET.clear()
