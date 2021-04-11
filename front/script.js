@@ -11,6 +11,7 @@ const ENTRY_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżź]/i;
 TEAM = "spec";
 TURN = "spec";
 PHASE = "capt";
+CAPT = true
 
 // ------ BUTTONS ------
 
@@ -96,6 +97,7 @@ function send_selected_files() {
 // -------- HELPER FUNCTIONS -------
 
 function be_captain() {
+	CAPT = true;
 	document.getElementById("captred").style.visibility = "hidden";
 	document.getElementById("captblue").style.visibility = "hidden";
 	document.getElementById("captain_stuff").style.display = "flex";
@@ -107,6 +109,7 @@ function be_deckhand() {
 	document.getElementById("captred").style.visibility = "visible";
 	document.getElementById("captblue").style.visibility = "visible";
 	document.getElementById("captain_stuff").style.display = "none";
+	if (CAPT) {
 	for(let i=0; i < matrix.rows.length; i++) {
 		const row = matrix.rows[i];
 		for(let j=0; j < row.cells.length; j++) {
@@ -115,6 +118,8 @@ function be_deckhand() {
 		}
 	}
 
+}
+	CAPT = false;
 }
 
 // -------- PROTOCOL HANDLERS -------
@@ -208,6 +213,8 @@ function entry_handler(message) {
 		document.getElementById("captain_stuff").style.visibility =
 			TEAM === TURN ? "visible" : "hidden";
 		document.getElementById("pass").style.visibility = "hidden";
+		document.getElementById("popendzajka").style.visibility =
+			(CAPT && TEAM === TURN) ? "visible" : "hidden";
 	} else {
 		// team thinking phase
 		PHASE = "team";
@@ -217,6 +224,8 @@ function entry_handler(message) {
 		document.getElementById("pass").style.visibility =
 			TEAM === TURN ? "visible" : "hidden";
 		document.getElementById("captain_stuff").style.visibility = "hidden";
+		document.getElementById("popendzajka").style.visibility =
+		(TEAM === TURN && !CAPT) ? "visible" : "hidden";
 	}
 }
 
