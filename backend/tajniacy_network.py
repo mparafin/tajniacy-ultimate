@@ -63,7 +63,6 @@ async def broadcast(message):
 
 async def broadcast_player_list():
 	await asyncio.gather(*[p.socket.send(player_list(p)) for p in td.PLAYERS])
-	await broadcast(protocol("uncovered"))
 
 async def name_handler(message, player):
 	game.change_name(player, message["nick"])
@@ -87,11 +86,13 @@ async def pass_handler(message, player):
 async def teamchange_handler(message, player):
 	game.change_team(player, message["team"])
 	await broadcast_player_list()
+	await player.socket.send(protocol("uncovered"))
 
 async def capt_handler(message, player):
 	game.make_captain(player, message["team"])
 	await player.socket.send(protocol("secret"))
 	await broadcast_player_list()
+	await player.socket.send(protocol("uncovered"))
 
 async def entry_handler(message, player):
 	ok = game.accept_entry(player, message["entry"], int(message["entrynumber"]))
