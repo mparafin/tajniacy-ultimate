@@ -61,6 +61,28 @@ function init_pass_button() {
 	}
 }
 
+function init_wordsmenu_buttons() {
+	document.getElementById("showwordsmenu").onclick = function () {
+		document.getElementById("wordssidebar").style.width = "20%";
+	}
+	document.getElementById("closewordsmenu").onclick = function () {
+		document.getElementById("wordssidebar").style.width = "0";
+	}
+}
+
+function send_selected_files() {
+	files = [];
+	let w = document.getElementById("wordsmenu");
+	w.childNodes.forEach(div => {
+		let checkbox = div.childNodes[0];
+		let filename = div.childNodes[1];
+		if (checkbox.checked) {
+			files.push(filename.textContent);
+		}
+	})
+	socket.send(JSON.stringify({"type":"file_list", "files":files}));
+}
+
 // -------- HELPER FUNCTIONS -------
 
 function be_captain() {
@@ -185,6 +207,32 @@ function secret_handler(message) {
 	}
 }
 
+function file_list_handler(message) {
+	let w = document.getElementById("wordsmenu");
+	while(w.firstChild) {
+		w.removeChild(t.lastChild);
+	}
+	message["files"].forEach(file => {
+		let div = document.createElement("div");
+		div.style.display = "flex";
+		div.style.flexDirection = "row";
+		div.style.alignContent = "center";
+		let checkbox = document.createElement("input");
+		checkbox.type = "checkbox";
+		checkbox.style.margin = "0.2em";
+		div.appendChild(checkbox);
+		let p = document.createElement("p");
+		p.textContent = file;
+		p.style.margin = "0.2em";
+		div.appendChild(p);
+		w.appendChild(div);
+	})
+	let sendbutt = document.createElement("button");
+	sendbutt.textContent = "Uaktualnij";
+	sendbutt.onclick = send_selected_files;
+	document.getElementById("wordssidebar").append(sendbutt);
+}
+
 function echo_handler(message) {
 	console.log("Echo from server:\n");
 	console.log(JSON.stringify(message["data"]));
@@ -196,6 +244,7 @@ handlers = {
 	"uncovered": uncovered_handler,
 	"entry": entry_handler,
 	"secret": secret_handler,
+	"file_list": file_list_handler,
 	"echo": echo_handler,
 }
 
@@ -205,6 +254,7 @@ init_namechanger();
 init_teambuttons();
 init_entrybutton();
 init_reset_buttons();
+init_wordsmenu_buttons();
 init_pass_button();
 
 matrix = document.getElementById("matrix");
