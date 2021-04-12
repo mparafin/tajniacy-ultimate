@@ -1,5 +1,6 @@
 import os
 import random
+import re
 import tajniacy_definitions as td
 
 def file_list():
@@ -7,6 +8,12 @@ def file_list():
 	for file in os.listdir(("./db")):
 		filenames.append(os.path.splitext(file)[0])
 	return filenames
+
+def save_file(filename, file):
+	bullshit = re.search("[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ\%\+]", file)
+	if bullshit:
+		return "wtf is this shit"
+	# perform the actual disk operation
 
 def update_file_choice(files):
 	td.FILE_CHOICE.clear()

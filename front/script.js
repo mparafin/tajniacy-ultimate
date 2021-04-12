@@ -8,6 +8,7 @@ const TILE_COLORS = {
 	"KILLER":"black"
 };
 const ENTRY_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ]/gi;
+const FILE_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ\%\+]/gi;
 TEAM = "spec";
 TURN = "spec";
 PHASE = "capt";
@@ -87,17 +88,65 @@ function init_wordsmenu_buttons() {
 	}
 }
 
-function send_selected_files() {
-	files = [];
-	let w = document.getElementById("wordsmenu");
-	w.childNodes.forEach(div => {
-		let checkbox = div.childNodes[0];
-		let filename = div.childNodes[1];
-		if (checkbox.checked) {
-			files.push(filename.textContent);
+function init_sendfilechoice_button() {
+	document.getElementById("sendfilechoice").onclick = function () {
+		files = [];
+		let w = document.getElementById("wordsmenu");
+		w.childNodes.forEach(div => {
+			let checkbox = div.childNodes[0];
+			let filename = div.childNodes[1];
+			if (checkbox.checked) {
+				files.push(filename.textContent);
+			}
+		})
+		SOCKET.send(JSON.stringify({"type":"file_choice", "files":files}));
+	}
+}
+
+function init_sendfile_button() {
+	document.getElementById("sendfile").onclick = function () {
+		let filename = document.getElementById("file").value;
+		if (!filename) {
+			alert("Najpierw załaduj jakiś plik, nie ma czego przesyłać.");
+			return;
 		}
-	})
-	SOCKET.send(JSON.stringify({"type":"file_choice", "files":files}));
+		// get raw filename
+		filename = filename.split('\\').pop().split('/').pop();
+		if (filename.split('.').pop() !== "txt") {
+			alert("Przyjmuję tylko pliki .txt.");
+			document.getElementById("file").value = null;
+			return;
+		}
+		var reader = new FileReader();
+		reader.onerror = function() {
+			alert("Co Ty wysyłasz?! Coś poszło nie tak z wczytywaniem pliku.");
+		}
+		
+		reader.onload = function(e) {
+			try {
+				if (FILE_REGEXP.test(reader.result)) {
+					alert("W tym pliku są niejęzykowe znaki! Wyczyść i wyślij ponownie.");
+					return;
+				}
+				let message = JSON.stringify({
+					"type":"file",
+					"filename":filename,
+					"file":reader.result
+				});
+				SOCKET.send(message);
+				return;
+			} catch (e) {
+				alert("wtf u doin");
+				return;
+			}
+		}
+		let file = document.getElementById("file").files[0];
+		if (file.size > 1048576) {
+			alert("Co to jest?! Ja przyjmuję pliki do 1MB. Jak Ci bardzo zależy, to podziel na części, chociaż podejrzewam, że to binarka. Aj Ty Ty.");
+			return;
+		}
+		reader.readAsText(file);
+	}
 }
 
 // -------- HELPER FUNCTIONS -------
@@ -277,10 +326,6 @@ function file_list_handler(message) {
 		div.appendChild(p);
 		w.appendChild(div);
 	})
-	let sendbutt = document.createElement("button");
-	sendbutt.textContent = "Uaktualnij";
-	sendbutt.onclick = send_selected_files;
-	document.getElementById("wordssidebar").append(sendbutt);
 }
 
 function file_choice_handler(message) {
@@ -319,6 +364,8 @@ init_teambuttons();
 init_entrybutton();
 init_reset_buttons();
 init_wordsmenu_buttons();
+init_sendfilechoice_button();
+init_sendfile_button();
 init_pass_button();
 
 matrix = document.getElementById("matrix");

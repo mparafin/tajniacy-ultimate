@@ -137,6 +137,13 @@ async def file_choice_handler(message, player):
 	print(td.FILE_CHOICE)
 	await broadcast(protocol("file_choice"))
 	
+async def file_handler(message, player):
+	err = game.save_file(message["filename"], message["file"])
+	if err:
+		await player.socket.send(protocol("alert", err))
+	print("Saved new file:" + message["filename"])
+	await broadcast(protocol("file_list"))
+	await broadcast(protocol("file_choice"))
 
 async def message_handler(message, player):
 	await {
@@ -149,6 +156,7 @@ async def message_handler(message, player):
 		'resetgame': reset_game_handler,
 		'resetsecret': reset_secret_handler,
 		'file_choice': file_choice_handler,
+		'file': file_handler,
 	}[message["type"]](message, player)
 
 async def client_handler(websocket, path):
@@ -169,7 +177,7 @@ async def client_handler(websocket, path):
 	try:
 		async for message in websocket:
 			mes = json.loads(message)
-			await message_handler(mes, p)			
+			await message_handler(mes, p)
 			await websocket.send(json.dumps({"type":"echo", "data":mes}))
 	finally:
 		print("CLIENT DISCONNECTED")
