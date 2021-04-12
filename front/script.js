@@ -308,7 +308,7 @@ function secret_handler(message) {
 function file_list_handler(message) {
 	let w = document.getElementById("wordsmenu");
 	while(w.firstChild) {
-		w.removeChild(t.lastChild);
+		w.removeChild(w.lastChild);
 	}
 	message["files"].forEach(file => {
 		let div = document.createElement("div");
