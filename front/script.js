@@ -7,7 +7,7 @@ const TILE_COLORS = {
 	"SPEC":"wheat",
 	"KILLER":"black"
 };
-const ENTRY_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżź]/i;
+const ENTRY_REGEXP = /[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ]/gi;
 TEAM = "spec";
 TURN = "spec";
 PHASE = "capt";
@@ -49,8 +49,14 @@ function init_entrybutton() {
 		let entry = document.getElementById("entry").value;
 		entry = entry.substring(0, 32);
 		let entrynumber = document.getElementById("entrynumber").value;
-		if (ENTRY_REGEXP.test(entry)) {
+		if (errs = entry.match(ENTRY_REGEXP)) {
 			console.log("Incorrect entry string!");
+			console.log(errs);
+			message = "Niepoprawne znaki!\n";
+			errs.forEach(err => {
+				message = message + err + " ";
+			});
+			alert(message);
 			return;
 		}
 		SOCKET.send(JSON.stringify({"type":"entry", "entry":entry, "entrynumber":entrynumber}));
