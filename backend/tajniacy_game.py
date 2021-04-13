@@ -10,10 +10,22 @@ def file_list():
 	return filenames
 
 def save_file(filename, file):
+	path = "./db/"+filename
+	if os.path.exists(path):
+		return "Taki plik już istnieje! Zmień nazwę pliku."
+
 	bullshit = re.search("[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ\%\+]", file)
 	if bullshit:
 		return "wtf is this shit"
-	# perform the actual disk operation
+
+	with open(path, "w", encoding="utf-8",) as f:
+		file = file.splitlines(keepends=False)
+		for line in file:
+			if len(line) > 20: continue
+			line.encode()
+			f.write(line+"\n")
+	print("Zapisano plik: {}".format(path))
+	
 
 def update_file_choice(files):
 	td.FILE_CHOICE.clear()

@@ -141,7 +141,7 @@ async def file_handler(message, player):
 	err = game.save_file(message["filename"], message["file"])
 	if err:
 		await player.socket.send(protocol("alert", err))
-	print("Saved new file:" + message["filename"])
+		return
 	await broadcast(protocol("file_list"))
 	await broadcast(protocol("file_choice"))
 
