@@ -228,7 +228,14 @@ function player_list_handler(message) {
 
 function uncovered_handler(message) {
 	data = message["uncovered"];
-	Object.keys(data).forEach(key => {
+	let tiles = Object.keys(data);
+	// hide "resetsecret" button if anything has been uncovered
+	if (Object.keys(tiles).length !== 0) {
+		document.getElementById("resetsecret").style.display = "none";
+	} else {
+		document.getElementById("resetsecret").style.display = "block";
+	}
+	tiles.forEach(key => {
 		document.getElementById(key).style.backgroundColor = TILE_COLORS[data[key]];
 		if (data[key] === "KILLER") {
 			document.getElementById(key).style.color = "white";
