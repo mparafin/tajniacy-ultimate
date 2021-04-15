@@ -15,9 +15,9 @@ class Player:
 
 def init():
 
-	# set of players connected to the server atm
+	# list of players connected to the server atm
 	global PLAYERS
-	PLAYERS = set()
+	PLAYERS = list()
 
 	# word matrix (5x5 array of str)
 	global MATRIX

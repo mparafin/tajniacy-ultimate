@@ -130,6 +130,18 @@ def make_captain(player, team):
 	player.capt = True
 	return None
 
+def randomize_teams():
+	if td.ENTRY or len(td.UNCOVERED):
+		return "No co Ty robisz, gra się zaczęła już"
+	
+	red = random.choice([True, False])
+	random.shuffle(td.PLAYERS)
+	for player in td.PLAYERS:
+		player.team = td.Team.RED if red else td.Team.BLUE
+		player.capt = False
+		red = not red
+	print("Teams randomized")
+
 def accept_entry(player, entry, number):
 	if not player.capt or player.team != td.TURN:
 		return "Nie tak szybko, cwaniaku."

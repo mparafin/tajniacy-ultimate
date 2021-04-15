@@ -101,6 +101,13 @@ async def capt_handler(message, player):
 	await broadcast_player_list()
 	await player.socket.send(protocol("uncovered"))
 
+async def randomizeteams_handler(message, player):
+	err = game.randomize_teams()
+	if err:
+		await player.socket.send(protocol("alert", err))
+		return
+	await broadcast_player_list()
+
 async def entry_handler(message, player):
 	err = game.accept_entry(player, message["entry"], int(message["entrynumber"]))
 	if err:
@@ -152,6 +159,7 @@ async def message_handler(message, player):
 		'pass': pass_handler,
 		'teamchange': teamchange_handler,
 		'capt': capt_handler,
+		'randomizeteams': randomizeteams_handler,
 		'entry': entry_handler,
 		'resetgame': reset_game_handler,
 		'resetsecret': reset_secret_handler,
@@ -162,7 +170,7 @@ async def message_handler(message, player):
 async def client_handler(websocket, path):
 	print("CONNECTION WITH CLIENT ESTABLISHED")
 	p = td.Player(websocket)
-	td.PLAYERS.add(p)
+	td.PLAYERS.append(p)
 
 	# send game state
 	# (the order of the first three is significant)

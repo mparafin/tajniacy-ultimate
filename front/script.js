@@ -36,6 +36,12 @@ function init_captbutton(team) {
 	}
 }
 
+function init_randomizeteams_button() {
+	document.getElementById("randomizeteams").onclick = function () {
+		SOCKET.send(JSON.stringify({"type":"randomizeteams"}));
+	}
+}
+
 function init_teambuttons() {
 	TEAM_NAMES.forEach(team => {
 		init_teamchanger(team);
@@ -43,6 +49,7 @@ function init_teambuttons() {
 			init_captbutton(team);
 		}
 	});
+	init_randomizeteams_button();
 }
 
 function init_entrybutton() {
@@ -229,11 +236,13 @@ function player_list_handler(message) {
 function uncovered_handler(message) {
 	data = message["uncovered"];
 	let tiles = Object.keys(data);
-	// hide "resetsecret" button if anything has been uncovered
+	// hide "resetsecret" and "randomizeteams" buttons if anything has been uncovered
 	if (Object.keys(tiles).length !== 0) {
 		document.getElementById("resetsecret").style.display = "none";
+		document.getElementById("randomizeteams").style.visibility = "hidden";
 	} else {
 		document.getElementById("resetsecret").style.display = "block";
+		document.getElementById("randomizeteams").style.visibility = "visible";
 	}
 	tiles.forEach(key => {
 		document.getElementById(key).style.backgroundColor = TILE_COLORS[data[key]];
@@ -270,7 +279,7 @@ function entry_handler(message) {
 		default:
 			console.log("Interesting, turn of team " + message["team"]);
 			break;
-	} 
+	}
 
 	if (message["entry"] === "") {
 		// captain thinking phase
@@ -292,6 +301,8 @@ function entry_handler(message) {
 		document.getElementById("captain_stuff").style.visibility = "hidden";
 		document.getElementById("popendzajka").style.visibility =
 		(TEAM === TURN && !CAPT) ? "visible" : "hidden";
+
+		document.getElementById("randomizeteams").style.visibility = "hidden";
 	}
 }
 
