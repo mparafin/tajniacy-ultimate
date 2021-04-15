@@ -38,7 +38,6 @@
 			font-size: 2.5em;
 		}
 		.sidenav {
-			height: 100%;
 			width: 0;
 			position: fixed;
 			z-index: 1;
@@ -119,11 +118,18 @@
 			<h1 style="text-align: center;">Ruszaj się, Twoja kolej!</h1>
 		</div>
 	</div>
-	<div id="wordssidebar" class="sidenav">
+	<div id="wordssidebar" class="sidenav" style="height: 100%;">
 		<button id="closewordsmenu" style="margin-top: 0.5em;">Zamknij się >>></button>
 		<h2>Wybierz zestaw słów</h2>
 		<div id="wordsmenu" style="display: flex; flex-direction: column; margin-bottom: 0.5em;"></div>
 		<button id="sendfilechoice">Uaktualnij</button>
+
+		<p>Słowa obowiązkowe (whitelist):</p>
+		<textarea id="whitelist" placeholder="Prosektorium, ..."></textarea>
+		<p>Słowa wykluczone (blacklist):</p>
+		<textarea id="blacklist" placeholder="Ciechocinek, ..."></textarea>
+		<br><button id="sendwordprefs" style="margin-top: 0.5em;">Uaktualnij</button>
+		
 		<hr style="margin: 1em">
 		<div style="display: flex; flex-direction: column;">
 			<input id="file" type="file" accept="text/plain">

@@ -14,7 +14,7 @@ def save_file(filename, file):
 	if os.path.exists(path):
 		return "Taki plik już istnieje! Zmień nazwę pliku."
 
-	bullshit = re.search("[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ\%\+]", file)
+	bullshit = re.search(td.WORD_REGEX, file)
 	if bullshit:
 		return "wtf is this shit"
 
@@ -31,10 +31,19 @@ def update_file_choice(files):
 	td.FILE_CHOICE.clear()
 	for file in files:
 		td.FILE_CHOICE.append(file)
+
+def update_wordprefs(whitelist, blacklist):
+	for word in whitelist:
+		if word and not re.search(td.WORD_REGEX, word):
+			td.WHITELIST.add(word)
+	for word in blacklist:
+		if word and not re.search(td.WORD_REGEX, word):
+			td.BLACKLIST.add(word)
 	
 
 def reset_matrix():
-	words = set()
+	# create a list of words from whitelist and files
+	words = set(td.WHITELIST)
 	filenames = td.FILE_CHOICE
 	for file in filenames:
 		path = "./db/"+file+".txt"
@@ -43,18 +52,29 @@ def reset_matrix():
 				w = w.strip("\n,; ")
 				w = w.upper()
 				words.add(w)
-	words = list(words)
+	for word in td.WHITELIST:
+		words.remove(word)
+	for word in td.BLACKLIST:
+		words.remove(word)
+
+	# make sure that the whitelist words make it onto the matrix
+	wordlist = list(words)
+	random.shuffle(wordlist)
+	words = list(td.WHITELIST)
+	words.extend(wordlist[:25])
 	if len(words) < 25:
-		return "Too few words!"
+		return "Zbyt mało słów! Wybierz więcej zbiorów lub rozszerz listę słów obowiązkowych."
+	# shuffle the words once more so that whitelist words don't end up only at the beginning
+	words = words[:25]
+	random.shuffle(words)
 	
+	# clear the matrix and fill it with words
 	td.MATRIX.clear()
 	td.ENTRY = ""
-	
 	for i in range(5):
 		td.MATRIX.append(list())
 		for j in range(5):
-			td.MATRIX[i].append(random.sample(words, 1)[0])
-			words.remove(td.MATRIX[i][j])
+			td.MATRIX[i].append(words.pop(0))
 	return None
 
 def reset_secret():

@@ -48,3 +48,12 @@ def init():
 	# which files to take words from
 	global FILE_CHOICE
 	FILE_CHOICE = []
+
+	# word preferences - lists of mandatory and excluded words
+	global WHITELIST, BLACKLIST
+	WHITELIST = set()
+	BLACKLIST = set()
+
+	# word validation regex
+	global WORD_REGEX
+	WORD_REGEX = "[^A-Za-z0-9\-\sąćęłńóśżźĄĆĘŁŃÓŚŻŹ\%\+]"

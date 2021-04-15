@@ -33,6 +33,11 @@ def protocol(key, message=None):
 		"type":"file_choice",
 		"files":td.FILE_CHOICE
 	}),
+	"wordprefs":json.dumps({
+		"type":"wordprefs",
+		"whitelist":list(td.WHITELIST),
+		"blacklist":list(td.BLACKLIST)
+	}),
 	"alert":json.dumps({
 		"type":"alert",
 		"message":message
@@ -118,7 +123,7 @@ async def entry_handler(message, player):
 async def reset_game_handler(message, player):
 	err = game.reset_matrix()
 	if (err):
-		await player.socket.send(protocol("alert", "Zbyt mało słów! Wybierz więcej zbiorów."))
+		await player.socket.send(protocol("alert", err))
 		return
 
 	game.reset_secret()
@@ -143,6 +148,13 @@ async def file_choice_handler(message, player):
 	print("File choice updated to: ")
 	print(td.FILE_CHOICE)
 	await broadcast(protocol("file_choice"))
+
+async def wordprefs_handler(message, player):
+	game.update_wordprefs(message["whitelist"], message["blacklist"])
+	print("Word preferences updated")
+	print(f"Whitelist: {td.WHITELIST}")
+	print(f"Blacklist: {td.BLACKLIST}")
+	await broadcast(protocol("wordprefs"))
 	
 async def file_handler(message, player):
 	err = game.save_file(message["filename"], message["file"])
@@ -164,6 +176,7 @@ async def message_handler(message, player):
 		'resetgame': reset_game_handler,
 		'resetsecret': reset_secret_handler,
 		'file_choice': file_choice_handler,
+		'wordprefs': wordprefs_handler,
 		'file': file_handler,
 	}[message["type"]](message, player)
 
@@ -179,6 +192,7 @@ async def client_handler(websocket, path):
 	await websocket.send(protocol("matrix"))
 	await websocket.send(protocol("file_list"))
 	await websocket.send(protocol("file_choice"))
+	await websocket.send(protocol("wordprefs"))
 
 	
 	print("Entering echo mode")

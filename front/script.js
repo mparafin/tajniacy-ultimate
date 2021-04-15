@@ -110,6 +110,20 @@ function init_sendfilechoice_button() {
 	}
 }
 
+function init_sendwordprefs_button() {
+	document.getElementById("sendwordprefs").onclick = function () {
+		whitelist = document.getElementById("whitelist").value;
+		whitelist = whitelist.split(/[\n,;]/)
+			.filter(word => {return word && !FILE_REGEXP.test(word)})
+			.map(word => word.trim().toUpperCase());
+		blacklist = document.getElementById("blacklist").value;
+		blacklist = blacklist.split(/[\n,;]/)
+			.filter(word => {return word && !FILE_REGEXP.test(word)})
+			.map(word => word.trim().toUpperCase());
+		SOCKET.send(JSON.stringify({"type":"wordprefs", "whitelist":whitelist, "blacklist":blacklist}));
+	}
+}
+
 function init_sendfile_button() {
 	document.getElementById("sendfile").onclick = function () {
 		let filename = document.getElementById("file").value;
@@ -354,6 +368,13 @@ function file_choice_handler(message) {
 	})
 }
 
+function wordprefs_handler(message) {
+	whitelist = document.getElementById("whitelist");
+	blacklist = document.getElementById("blacklist");
+	whitelist.value = message["whitelist"].join(", ");
+	blacklist.value = message["blacklist"].join(",");
+}
+
 function alert_handler(message) {
 	alert(message["message"]); //lol
 }
@@ -371,6 +392,7 @@ var handlers = {
 	"secret": secret_handler,
 	"file_list": file_list_handler,
 	"file_choice": file_choice_handler,
+	"wordprefs": wordprefs_handler,
 	"alert": alert_handler,
 	"echo": echo_handler,
 }
@@ -383,6 +405,7 @@ init_entrybutton();
 init_reset_buttons();
 init_wordsmenu_buttons();
 init_sendfilechoice_button();
+init_sendwordprefs_button();
 init_sendfile_button();
 init_pass_button();
 
