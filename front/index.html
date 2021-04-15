@@ -13,6 +13,20 @@
 			width: 60%;
 			border-radius: 1em;
 		}
+		.rainbow {
+			margin: 0.75em 0;
+			height: 2.5em;
+			width: 60%;
+			border-radius: 2em;
+			background: linear-gradient(124deg, lightskyblue, #bb99bd, lightcoral);
+			background-size: 200% 200%;
+			animation: rainbow 6s ease infinite;
+		}
+		@keyframes rainbow { 
+			0%{background-position:0% 82%}
+			50%{background-position:100% 19%}
+			100%{background-position:0% 82%}
+		}
 		.captbutton {
 			margin: 0.25em;
 			height: 3em;
@@ -43,7 +57,7 @@
 				<button id="namechanger" style="margin-left: 0.5em;">Ok</button><br>
 			</div>
 	<div id="header" style="display: flex; flex-direction: row; height: 23vh;">
-		<div style="width: 20%;">
+		<div style="width: 20%; display: flex; flex-direction: column;">
 			<div style="display: flex; flex-direction: row;">
 				<button id="joinred" class="teambutton" style="background-color: lightcoral;">Dołącz do Czerwonych</button><br>
 				<button id="captred" class="captbutton" title="Zostań kapitanem drużyny" style="background-color: indianred;">👑</button>
@@ -53,6 +67,7 @@
 				<button id="captblue" class="captbutton" title="Zostań kapitanem drużyny" style="background-color: cornflowerblue;">👑</button>
 			</div>
 			<button id="joinspec" class="teambutton" style="background-color: whitesmoke;">Zostań Obserwatorem</button>
+			<button id="randomizeteams" class="rainbow">Losuj drużyny</button>
 		</div>
 		<div style="width: 60%;">
 			<h1 style="text-align: center;">Tajniacy ultimate</h1>
